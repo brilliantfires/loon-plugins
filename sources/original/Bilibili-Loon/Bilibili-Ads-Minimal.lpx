@@ -1,0 +1,37 @@
+#!name=哔哩哔哩去广告（极简纯净版）
+#!desc=不使用任何 protobuf 脚本，只处理明确的 JSON 广告接口。适合优先保证弹幕、评论、搜索和播放行为不变的情况。
+#!openUrl=https://apps.apple.com/app/id736536022
+#!homepage=https://github.com/kokoryh/Sparkle
+#!tag=去广告
+#!system=iOS,iPadOS
+#!system_version=15
+#!loon_version=3.5.1(998)
+#!icon=https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Bilibili.png
+#!author=本地整理：Codex；规则参考 kokoryh
+#!date=2026-11-04
+
+[Argument]
+splashAds = switch,true,tag=开屏与启动广告
+feedAds = switch,true,tag=推荐流显式广告
+liveAds = switch,true,tag=直播广告与购物浮层
+exactAds = switch,true,tag=明确广告素材接口
+
+[Rewrite]
+request if ${splashAds} == true && ${url} ~= /^https:\/\/(?:api\.bilibili\.com\/x\/mengqi\/v1\/resource|app\.bilibili\.com\/x\/resource\/peak\/download)(?:\?|$)/i then reject_dict(200)
+
+request if ${liveAds} == true && ${url} ~= /^https:\/\/line3-h5-mobile-api\.biligame\.com\/game\/live\/large_card_material\?/i then reject_dict(200)
+request if ${liveAds} == true && ${url} ~= /^https:\/\/api\.live\.bilibili\.com\/xlive\/e-commerce-interface\/v1\/ecommerce-user\/get_shopping_info\?/i then reject_dict(200)
+response if ${liveAds} == true && ${url} ~= /^https:\/\/api\.live\.bilibili\.com\/xlive\/app-interface\/v2\/index\/feed\?/i then response.json.jq(`if (.data.card_list | type) == "array" then .data.card_list |= map(select(.card_type != "banner_v2" and .card_type != "activity_card_v1")) else . end`)
+response if ${liveAds} == true && ${url} ~= /^https:\/\/api\.live\.bilibili\.com\/xlive\/app-room\/v1\/index\/getInfoBy(Room|User)\?/i then response.json.jq(`del(.data.shopping_info, .data.activity_banner_info)`)
+
+response if ${splashAds} == true && ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/splash\/(show|event\/list2)\?/i then response.json.jq(`if (.data | type) == "object" then .data |= with_entries(if .key | IN("show", "event_list") then .value = [] else . end) else . end`)
+response if ${splashAds} == true && ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/splash\/list\?/i then response.body.mock("json", `{"code":0,"message":"OK","ttl":1,"data":{"max_time":0,"min_interval":31536000,"pull_interval":31536000,"keep_ids":[],"show":[],"list":[{}],"splash_request_id":""}}`, 200)
+
+response if ${feedAds} == true && ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index\?/i then response.json.jq(`if (.data.items | type) == "array" then .data.items |= map(select(.ad_info == null)) else . end`)
+response if ${feedAds} == true && ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index\/story\?/i then response.json.jq(`if (.data.items | type) == "array" then .data.items |= map(select(.ad_info == null and (.card_goto | IN("vertical_ad_av", "vertical_ad_live", "vertical_ad_picture") | not))) else . end`)
+
+response if ${exactAds} == true && ${url} ~= /^https:\/\/api\.bilibili\.com\/x\/vip\/ads\/materials\?/i then response.body.mock("json", `{"code":-404,"message":"-404","ttl":1,"data":null}`, 200)
+response if ${exactAds} == true && ${url} ~= /^https:\/\/api\.bilibili\.com\/pgc\/activity\/deliver\/material\/receive\?/i then response.body.mock("json", `{"code":0,"data":{"closeType":"close_win","container":[],"showTime":""},"message":"success"}`, 200)
+
+[MitM]
+hostname = app.bilibili.com, api.bilibili.com, api.live.bilibili.com, line3-h5-mobile-api.biligame.com

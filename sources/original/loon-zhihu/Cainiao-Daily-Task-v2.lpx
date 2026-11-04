@@ -1,0 +1,8 @@
+#!name=菜鸟
+#!desc=清空每日任务接口的整个data，移除任务和活动样式配置，尝试收起残留容器。替代旧版任务补丁，保留其他去广告插件。实机布局效果待验证。
+
+[Rewrite]
+response if ${url} ~= /^https:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.cainiao\.pubaccount\.daily\.task\.activity\.task\.query\/2\.0\/?(?:\?|$)/i then response.json.jq(".data={}")
+
+[Mitm]
+hostname = guide-acs.m.taobao.com

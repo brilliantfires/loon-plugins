@@ -1,0 +1,21 @@
+#!name=麦当劳
+#!desc=通过将开屏投放窗口设为过期并清理推广弹窗来去广告；两个功能可独立关闭。
+#!homepage=https://hub.kelee.one
+#!tag=去广告
+#!system=iOS,iPadOS
+#!system_version=15
+#!loon_version=3.5.1(998)
+#!author=本地整理：Codex
+#!date=2026-11-04
+
+[Argument]
+splashConfig = switch,true,tag=开屏投放过期处理
+popupClean = switch,true,tag=推广弹窗过滤
+
+[Rewrite]
+response if ${splashConfig} == true && ${url} ~= /^https:\/\/api\.mcd\.cn\/bff\/portal\/home\/splash(?:\?|$)/i then response.json.jq("if (.data.list | type) == \"array\" then .data.list |= map(.countDown=0 | .beginTime=\"2000-01-01 00:00:00\" | .endTime=\"2000-01-01 00:00:00\" | if (.showTimeList | type) == \"array\" then .showTimeList |= map(.beginDate=\"2000-01-01\" | .endDate=\"2000-01-01\") else . end) else . end")
+
+response if ${popupClean} == true && ${url} ~= /^https:\/\/api\.mcd\.cn\/bff\/portal\/richpop\/v2(?:\?|$)/i then response.json.jq("del(.data.pop)")
+
+[MitM]
+hostname = api.mcd.cn

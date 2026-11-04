@@ -1,0 +1,32 @@
+#!name=小象超市
+#!desc=过滤开屏、悬浮推广、横幅、商品推荐和广告配置字段。
+#!homepage=https://hub.kelee.one
+#!tag=去广告
+#!system=iOS,iPadOS
+#!system_version=15
+#!loon_version=3.5.1(998)
+#!icon=https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/iMaiCai.png
+#!author=原规则：可莉；本地整理：Codex
+#!date=2026-11-04
+
+[Rewrite]
+# 开屏广告
+request if ${url} ~= /^https:\/\/mall\.meituan\.com\/api\/c\/homepage\/splash/i then reject_dict(200)
+
+# 悬浮推广与分类横幅
+request if ${url} ~= /^https:\/\/mall\.meituan\.com\/api\/c\/homepage\/bubble\/operate\/info/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/mall\.meituan\.com\/api\/c\/jigsaw\/code\/category-banner-\d+\//i then reject_dict(200)
+request if ${url} ~= /^https:\/\/mall\.meituan\.com\/api\/c\/banner\//i then reject_dict(200)
+
+# 订单页与个人页商品推荐
+request if ${url} ~= /^https:\/\/mall\.meituan\.com\/api\/c\/poi\/\d+\/order\/recommend\/v\d/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/mall\.meituan\.com\/api\/c\/poi\/\d+\/personal\/recommend/i then reject_dict(200)
+
+# 推广列表
+request if ${url} ~= /^https:\/\/businessapi\.ksedt\.com\/signupindex\/jxlist/i then reject_dict(200)
+
+# 下发广告配置
+response if ${url} ~= /^https:\/\/portal-portm\.meituan\.com\/horn_ios\/mergeRequest/i then response.json.delete("aidata_dd_resource_config.data.customer.feature_src_list.ad")
+
+[MitM]
+hostname = portal-portm.meituan.com, mall.meituan.com, businessapi.ksedt.com

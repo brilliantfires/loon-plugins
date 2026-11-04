@@ -1,0 +1,32 @@
+#!name=转转
+#!desc=过滤开屏广告、推广弹窗、信息流推广和商品推荐，精简我的页面。基于用户提供的网络版规则整理，本地独立维护；统一接口边界匹配，合并个人页处理，补充缺失数组保护。待实机验证。
+#!author=原规则：可莉；本地整理：Codex
+
+[Rewrite]
+# 开屏广告
+request if ${url} ~= /^https:\/\/app\.zhuanzhuan\.com\/zz\/v2\/zzlogic\/getOpenScreen(?:\?|$)/i then reject_dict(200)
+
+# 首页与信息流
+response if ${url} ~= /^https:\/\/app\.zhuanzhuan\.com\/zzx\/transfer\/getConfigInfo(?:\?|$)/i then response.json.delete(["respData.freeMarketTabLeadPop", "respData.topOperations"])
+response if ${url} ~= /^https:\/\/app\.zhuanzhuan\.com\/zz\/v2\/zzinfoshow\/getfeedflowinfo(?:\?|$)/i then response.json.jq("if .respData.userRed.campName == \"OCD挂件\" then del(.respData.userRed) else . end | if (.respData.infoData | type) == \"array\" then .respData.infoData |= map(del(.rotateResource, .appRecommendResource, .cargoGroupCardV2)) else . end")
+request if ${url} ~= /^https:\/\/app\.zhuanzhuan\.com\/zz\/v2\/zzinfoshow\/getwindvanecardv2(?:\?|$)/i then reject_dict(200)
+
+# 推广弹窗
+request if ${url} ~= /^https:\/\/app\.zhuanzhuan\.com\/zzopen\/popwindow\/getallpopwin(?:\?|$)/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/app\.zhuanzhuan\.com\/zzopen\/zzbmlogic\/queryFrontPageWindowInfo(?:\?|$)/i then reject_dict(200)
+
+# 热门订阅与商品推荐
+request if ${url} ~= /^https:\/\/app\.zhuanzhuan\.com\/zzopen\/ptuserlogic\/subscribehotrecommend(?:\?|$)/i then reject_dict(200)
+response if ${url} ~= /^https:\/\/app\.zhuanzhuan\.com\/zzopen\/ptsimpleshow\/recommendbymyloveinfo(?:\?|$)/i then response.body.mock("json", "{\"respCode\":0,\"errorMsg\":\"null\",\"errMsg\":\"\"}", 200)
+response if ${url} ~= /^https:\/\/app\.zhuanzhuan\.com\/zz\/v2\/zzinfoshow\/footprintsamerecommend(?:\?|$)/i then response.body.mock("json", "{\"respCode\":0,\"errorMsg\":\"\",\"errMsg\":\"\"}", 200)
+request if ${url} ~= /^https:\/\/app\.zhuanzhuan\.com\/zzopen\/ypmall\/listData(?:\?|$)/i then reject_dict(200)
+response if ${url} ~= /^https:\/\/app\.zhuanzhuan\.com\/zz\/v2\/zzinfoshow\/getchoicegoodsinfos(?:\?|$)/i then response.body.mock("json", "{\"respCode\":0,\"respData\":{},\"errorMsg\":\"\",\"errMsg\":\"\"}", 200)
+
+# 我的页面
+response if ${url} ~= /^https:\/\/app\.zhuanzhuan\.com\/zz\/v2\/zzlogic\/mycontinenthomepage(?:\?|$)/i then response.json.delete(["respData.topOpera.leftOpera", "respData.topOpera.rightOpera2", "respData.topActBanner", "respData.bmArea"])
+request if ${url} ~= /^https:\/\/app\.zhuanzhuan\.com\/zz\/v2\/zzusercenter\/myprofilevariouscards(?:\?|$)/i then reject_dict(200)
+response if ${url} ~= /^https:\/\/app\.zhuanzhuan\.com\/zz\/transfer\/getmymoretools(?:\?|$)/i then response.json.jq("walk(if type == \"object\" and .name == \"免流量特权\" then empty else . end) | if (.respData.groupList | type) == \"array\" then del(.respData.groupList[] | select(.groupName == \"活动参与\" or .groupName == \"金融工具\")) else . end")
+response if ${url} ~= /^https:\/\/app\.zhuanzhuan\.com\/zz\/transfer\/getmyprofilev3(?:\?|$)/i then response.json.jq("del(.respData.bmNewInfo) | if (.respData.itemGroupList | type) == \"array\" then .respData.itemGroupList |= map(select(.groupType != 15) | if (.itemList | type) == \"array\" then .itemList |= map(select(.name != \"天天赚钱\" and .name != \"借钱\")) else . end) else . end")
+
+[Mitm]
+hostname = app.zhuanzhuan.com

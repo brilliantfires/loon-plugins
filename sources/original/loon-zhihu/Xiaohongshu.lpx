@@ -1,0 +1,44 @@
+#!name=小红书
+#!loon_version=3.5.1(998)
+#!desc=基于用户提供的规则和脚本本地维护，过滤开屏、信息流及搜索推广，处理图片、实况照片和视频保存。提供11项独立功能开关，默认全部开启。待实机验证。
+#!author=原规则与脚本：RuCu6、fmz200；本地整理：Codex
+
+[Argument]
+splashAds = switch,true,tag=开屏广告,desc=清理开屏及启动配置
+feedAds = switch,true,tag=信息流广告,desc=过滤赞助及非笔记推广卡片
+liveCards = switch,true,tag=隐藏直播卡片,desc=隐藏首页直播推荐
+shoppingCards = switch,true,tag=隐藏带货卡片,desc=隐藏首页带货及商品推荐
+popups = switch,true,tag=推广弹窗,desc=过滤营销弹窗及引导
+searchClean = switch,true,tag=搜索精简,desc=清理热搜搜索提示及搜索推广
+uiClean = switch,true,tag=页面精简,desc=清理活动主题侧栏及详情页小部件
+followClean = switch,true,tag=关注推荐精简,desc=清理可能感兴趣的人及关注推荐
+imageSave = switch,true,tag=图片与实况保存,desc=调整图片水印和保存配置并替换实况视频地址
+videoSave = switch,true,tag=视频保存,desc=调整下载入口保存限制及视频保存地址
+commentSave = switch,true,tag=评论图片与实况保存,desc=调整评论媒体类型水印标识及实况保存地址
+
+[Rule]
+AND,((PROTOCOL,QUIC),(DOMAIN-SUFFIX,xiaohongshu.com)),REJECT
+
+[Rewrite]
+# 水印资源与推广入口
+request if ${imageSave} == true && ${url} ~= /^https:\/\/ci\.xiaohongshu\.com\/system_config\/watermark/i then reject_img(200)
+request if ${popups} == true && ${url} ~= /^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/surprisebox\/(?:get_style|open|submit_action)/i then reject_dict(200)
+request if ${popups} == true && ${url} ~= /^https:\/\/www\.xiaohongshu\.com\/api\/marketing\/box\/trigger(?:\?|$)/i then reject_dict(200)
+request if ${popups} == true && ${url} ~= /^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/(?:v2\/guide\/user_banner|v3\/note\/guide)/i then reject_dict(200)
+request if ${popups} == true && ${url} ~= /^https:\/\/www\.xiaohongshu\.com\/api\/sns\/(?:v1\/ads\/resource|v2\/hey\/\w+\/hey_gallery)/i then reject_dict(200)
+
+# 搜索页：使用JSON对象和数组
+response if ${searchClean} == true && ${url} ~= /^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/search\/banner_list(?:\?|$)/i then response.json.replace("data", {})
+response if ${searchClean} == true && ${url} ~= /^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/search\/hot_list(?:\?|$)/i then response.json.replace("data.items", [])
+response if ${searchClean} == true && ${url} ~= /^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v4\/search\/hint/i then response.json.replace("data.hint_words", [])
+response if ${searchClean} == true && ${url} ~= /^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v4\/search\/trending(?:\?|$)/i then response.json.replace("data.queries", []) | response.json.replace("data.hint_word", {})
+
+[Script]
+# 将原脚本的各分支归并到同一份本地脚本。edith接口由脚本中的分支路径补齐。
+response if ${url} ~= /^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/(?:v1\/(?:interaction\/comment\/video\/download|note\/(?:imagefeed|live_photo\/save)|system\/service\/ui\/config|system_service\/config)|v2\/(?:note\/(?:feed|widgets)|system_service\/splash_config|user\/followings\/followfeed)|v3\/note\/videofeed|v4\/(?:followfeed|note\/videofeed)|v5\/(?:note\/comment\/list|recommend\/user\/follow_recommend)|v6\/homefeed|v10\/(?:note\/video\/save|search\/notes))(?:\?|$)/ then script("http://192.168.3.35:18765/Xiaohongshu.js", {${splashAds}, ${feedAds}, ${liveCards}, ${shoppingCards}, ${popups}, ${searchClean}, ${uiClean}, ${followClean}, ${imageSave}, ${videoSave}, ${commentSave}}) with requires_body=true, timeout=10, tag="小红书响应处理"
+response if ${url} ~= /^https:\/\/rec\.xiaohongshu\.com\/api\/sns\/(?:v6\/homefeed|v10\/note\/video\/save)(?:\?|$)/ then script("http://192.168.3.35:18765/Xiaohongshu.js", {${splashAds}, ${feedAds}, ${liveCards}, ${shoppingCards}, ${popups}, ${searchClean}, ${uiClean}, ${followClean}, ${imageSave}, ${videoSave}, ${commentSave}}) with requires_body=true, timeout=10, tag="小红书推荐处理"
+response if ${url} ~= /^https:\/\/so\.xiaohongshu\.com\/api\/sns\/v10\/search\/notes(?:\?|$)/ then script("http://192.168.3.35:18765/Xiaohongshu.js", {${splashAds}, ${feedAds}, ${liveCards}, ${shoppingCards}, ${popups}, ${searchClean}, ${uiClean}, ${followClean}, ${imageSave}, ${videoSave}, ${commentSave}}) with requires_body=true, timeout=10, tag="小红书搜索处理"
+response if ${url} ~= /^https:\/\/www\.xiaohongshu\.com\/api\/sns\/v10\/note\/video\/save(?:\?|$)/ then script("http://192.168.3.35:18765/Xiaohongshu.js", {${splashAds}, ${feedAds}, ${liveCards}, ${shoppingCards}, ${popups}, ${searchClean}, ${uiClean}, ${followClean}, ${imageSave}, ${videoSave}, ${commentSave}}) with requires_body=true, timeout=10, tag="小红书保存处理"
+
+[Mitm]
+hostname = ci.xiaohongshu.com, edith.xiaohongshu.com, rec.xiaohongshu.com, so.xiaohongshu.com, www.xiaohongshu.com

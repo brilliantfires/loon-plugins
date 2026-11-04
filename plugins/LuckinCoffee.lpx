@@ -1,0 +1,22 @@
+#!name=瑞幸咖啡
+#!desc=过滤开屏、弹窗、活动及推广接口。
+#!homepage=https://hub.kelee.one
+#!tag=去广告
+#!system=iOS,iPadOS
+#!system_version=15
+#!loon_version=3.5.1(998)
+#!icon=https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/LuckinCoffee.png
+#!author=原规则：Sliverkiss；本地整理：Codex
+#!date=2026-11-04
+
+[Rewrite]
+request if ${url} ~= /^https:\/\/capi\.lkcoffee\.com\/resource\/m\/growUp\/calendarList/i then reject(404)
+request if ${url} ~= /^https:\/\/capi\.lkcoffee\.com\/resource\/m\/promotion\/giftCard\/topPage/i then reject(404)
+request if ${url} ~= /^https:\/\/capi\.lkcoffee\.com\/resource\/m\/sys\/base\/myLittleLuck/i then reject(404)
+request if ${url} ~= /^https:\/\/capi\.lkcoffee\.com\/resource\/core\/v2\/menu\/ordinaryUserLayeredArea/i then reject(404)
+request if ${url} ~= /^https:\/\/capi\.lkcoffee\.com\/resource\/m\/sys\/common\/modules/i then reject(404)
+request if ${url} ~= /^https:\/\/capi\.lkcoffee\.com\/resource\/m\/eorder\/product\/popAppTagProductList/i then reject(404)
+request if ${url} ~= /^https:\/\/capi\.lkcoffee\.com\/resource\/m\/sys\/app\/adposNew/i then reject(404)
+
+[MitM]
+hostname = capi.lkcoffee.com

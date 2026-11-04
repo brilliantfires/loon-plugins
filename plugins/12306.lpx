@@ -1,0 +1,22 @@
+#!name=12306
+#!desc=过滤开屏广告和应用内推广入口；应用内推广过滤可独立关闭。
+#!homepage=https://hub.kelee.one
+#!tag=去广告
+#!system=iOS,iPadOS
+#!system_version=15
+#!loon_version=3.5.1(998)
+#!icon=https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/12306.png
+#!author=本地整理：Codex
+#!date=2026-11-04
+
+[Argument]
+appPromotions = switch,true,tag=应用内推广过滤,desc=关闭后仅过滤开屏广告，避免推广入口处理影响其他页面。
+
+[Rewrite]
+# 开屏广告
+request if ${url} ~= /^https:\/\/ad\.12306\.cn\/ad\/ser\/getAdList(?:\?|$)/i then reject_dict(200)
+# 应用内推广：同时限定接口路径与operation-type完整值
+request if ${appPromotions} == true && ${url} ~= /^https:\/\/mobile\.12306\.cn\/otsmobile\/app\/mgs\// && ${request.header['operation-type']} ~= /^com\.cars\.otsmobile\.(?:integration\.activityBanner|memberInfo\.getMemberQa|newHomePage\.initData|newHomePageBussData|paySuccBuss\.bussEntryShow)$/ then reject_dict(200)
+
+[MitM]
+hostname = ad.12306.cn, mobile.12306.cn

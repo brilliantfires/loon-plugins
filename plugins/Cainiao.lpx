@@ -1,0 +1,35 @@
+#!name=菜鸟
+#!desc=过滤菜鸟广告并提供每日现金任务隐藏开关；每日任务会清空任务接口，异常时可单独关闭。
+#!homepage=https://hub.kelee.one
+#!tag=去广告
+#!system=iOS,iPadOS
+#!system_version=15
+#!loon_version=3.5.1(998)
+#!icon=https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Cainiao.png
+#!author=原规则：@小白脸、可莉；本地整合：Codex
+#!date=2026-11-04
+
+[Argument]
+dailyTasks = switch,true,tag=隐藏每日现金任务,desc=会清空每日任务接口的 data；页面异常或需要查看任务时可关闭。
+
+[Rewrite]
+request if ${url} ~= /^https:\/\/nbcps-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.nbcps\.presentation\.fetch\.cn/i then reject(404)
+
+request if ${url} ~= /^https:\/\/netflow-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\.index/i then reject(404)
+
+request if ${url} ~= /^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.adkeyword\.get\.cn/i then reject(404)
+
+request if ${url} ~= /^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\.m?show/i then reject(404)
+
+response if ${url} ~= /^https:\/\/(cn-acs\.m|e2e-mtop)\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch/i then response.json.jq("del(.data.data.data.mainSearch.bizData.searchContents, .data.data.data.operationList)")
+
+response if ${url} ~= /^https:\/\/e2e-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.app\.e2e\.engine\.page\.fetch\.cn/i then response.json.jq("del(.data.data.banner, .data.data.activity, .data.data.vip)")
+
+response if ${url} ~= /^https:\/\/longquan-mtop\.cainiao\.com\/gw\/mtop\.com\.cainiao\.longquan\.place\.getpageresourcecontent\.cn/i then response.json.jq("del(.data.result.placeContentMap[\"780001\"].contentList)")
+
+response if ${url} ~= /^https:\/\/netflow-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads/i then response.json.jq("if .data.result[0].materialId == \"39017\" then . else .data = {} end")
+
+response if ${dailyTasks} == true && ${url} ~= /^https:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.cainiao\.pubaccount\.daily\.task\.activity\.task\.query\/2\.0\/?(?:\?|$)/i then response.json.jq(".data={}")
+
+[MitM]
+hostname = netflow-mtop.cainiao.com, nbcps-mtop.cainiao.com, cn-acs.m.cainiao.com, e2e-mtop.cainiao.com, longquan-mtop.cainiao.com, guide-acs.m.taobao.com

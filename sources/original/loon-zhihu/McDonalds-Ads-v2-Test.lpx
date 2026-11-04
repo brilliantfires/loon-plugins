@@ -1,0 +1,10 @@
+#!name=麦当劳
+#!desc=测试版：保留开屏记录ID，将投放窗口设为过期、倒计时设为0；保留推广弹窗过滤。用于验证空列表未覆盖旧配置的假设，尚未实机确认。替换v1使用。
+
+[Rewrite]
+response if ${url} ~= /^https:\/\/api\.mcd\.cn\/bff\/portal\/home\/splash(?:\?|$)/i then response.json.jq("if (.data.list | type) == \"array\" then .data.list |= map(.countDown=0 | .beginTime=\"2000-01-01 00:00:00\" | .endTime=\"2000-01-01 00:00:00\" | if (.showTimeList | type) == \"array\" then .showTimeList |= map(.beginDate=\"2000-01-01\" | .endDate=\"2000-01-01\") else . end) else . end")
+
+response if ${url} ~= /^https:\/\/api\.mcd\.cn\/bff\/portal\/richpop\/v2(?:\?|$)/i then response.json.jq("del(.data.pop)")
+
+[Mitm]
+hostname = api.mcd.cn

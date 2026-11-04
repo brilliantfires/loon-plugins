@@ -1,0 +1,19 @@
+#!name=淘票票
+#!desc=过滤广告弹窗、悬浮推广、搜索填充词、横幅和猜你喜欢。
+#!homepage=https://hub.kelee.one
+#!tag=去广告
+#!system=iOS,iPadOS
+#!system_version=15
+#!loon_version=3.5.1(998)
+#!icon=https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Taopiaopiao.png
+#!author=原规则：可莉；本地整理：Codex
+#!date=2026-11-04
+
+[Rewrite]
+request if ${url} ~= /^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.life\.popup\.get\//i then reject_dict(200)
+request if ${url} ~= /^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.mtopitemadvertiseapi\.queryadvertise\//i then reject_dict(200)
+response if ${url} ~= /^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.mtopintegrationapi\.homeconfig\//i then response.json.jq("if type == \"object\" then if (.data | type) == \"object\" then if (.data.returnValue | type) == \"object\" then del(.data.returnValue.floatingBanner, .data.returnValue.searchShadeList) | if (.data.returnValue.topTab | type) == \"array\" then .data.returnValue.topTab |= map( if type == \"object\" then select(.activeImage | not) | del(.backgroundColor) else . end ) else . end else . end else . end else . end")
+response if ${url} ~= /^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.life\.aristotle\.get\//i then response.json.jq("def filter_nodes: if type == \"array\" then map(if type == \"object\" then (.data | if type == \"object\" then .componentId else null end) as $component | if ($component | if type == \"string\" then contains(\"tpp_banner\") or . == \"tpp_guess_like\" else false end) then empty elif has(\"nodes\") then .nodes |= filter_nodes else . end else . end) else . end; if type == \"object\" then if (.data | type) == \"object\" then if (.data | has(\"nodes\")) then .data.nodes |= filter_nodes else . end else . end else . end")
+
+[MitM]
+hostname = acs.m.taobao.com

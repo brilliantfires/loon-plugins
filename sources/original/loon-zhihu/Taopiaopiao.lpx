@@ -1,0 +1,13 @@
+#!name=淘票票
+#!loon_version=3.5.1(998)
+#!desc=依据用户提供的规则过滤广告弹窗、广告接口、悬浮推广、搜索填充词、横幅及猜你喜欢，本地独立维护。待实机验证。
+#!author=原规则：可莉；本地整理：Codex
+
+[Rewrite]
+request if ${url} ~= /^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.life\.popup\.get\//i then reject_dict(200)
+request if ${url} ~= /^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.mtopitemadvertiseapi\.queryadvertise\//i then reject_dict(200)
+response if ${url} ~= /^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.mtopintegrationapi\.homeconfig\//i then response.json.jq("if type == \"object\" then if (.data | type) == \"object\" then if (.data.returnValue | type) == \"object\" then del(.data.returnValue.floatingBanner, .data.returnValue.searchShadeList) | if (.data.returnValue.topTab | type) == \"array\" then .data.returnValue.topTab |= map( if type == \"object\" then select(.activeImage | not) | del(.backgroundColor) else . end ) else . end else . end else . end else . end")
+response if ${url} ~= /^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.life\.aristotle\.get\//i then response.json.jq("def filter_nodes: if type == \"array\" then map(if type == \"object\" then (.data | if type == \"object\" then .componentId else null end) as $component | if ($component | if type == \"string\" then contains(\"tpp_banner\") or . == \"tpp_guess_like\" else false end) then empty elif has(\"nodes\") then .nodes |= filter_nodes else . end else . end) else . end; if type == \"object\" then if (.data | type) == \"object\" then if (.data | has(\"nodes\")) then .data.nodes |= filter_nodes else . end else . end else . end")
+
+[Mitm]
+hostname = acs.m.taobao.com

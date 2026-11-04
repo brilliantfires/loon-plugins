@@ -1,0 +1,14 @@
+#!name=微信公众号
+#!desc=依据用户提供的规则过滤公众号广告、商品推广、相关推荐及监测请求，本地独立维护。待实机验证。
+#!author=原规则：RuCu6；本地整理：Codex
+#!loon_version=3.5.1(998)
+
+[Rule]
+DOMAIN-SUFFIX,wxs.qq.com,REJECT
+
+[Rewrite]
+request if ${url} ~= /^https:\/\/mp\.weixin\.qq\.com\/mp\/(cps_product_info|getappmsgad|jsmonitor|masonryfeed|relatedarticle)\?/i then reject_dict(200)
+request if ${url} ~= /^https:\/\/mp\.weixin\.qq\.com\/mp\/relatedsearchword/i then reject_dict(200)
+
+[Mitm]
+hostname = mp.weixin.qq.com

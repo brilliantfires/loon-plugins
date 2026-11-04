@@ -1,0 +1,24 @@
+#!name=YouTube
+#!desc=过滤视频、信息流、搜索和 Shorts 广告。需要启用 MitM over HTTP/2 与 QUIC 回退保护。
+#!homepage=https://hub.kelee.one
+#!tag=去广告
+#!system=iOS,iPadOS,macOS
+#!system_version=15
+#!loon_version=3.5.1(998)
+#!icon=https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/YouTube.png
+#!author=原规则与脚本：Maasea、VirgilClyne、Choler、DivineEngine、app2smile；本地整理：Codex
+#!date=2026-11-04
+
+[Rule]
+AND,((PROTOCOL,QUIC),(DOMAIN,youtubei.googleapis.com)),REJECT
+AND,((PROTOCOL,QUIC),(DOMAIN-SUFFIX,googlevideo.com)),REJECT
+
+[Rewrite]
+# 沿用原请求脚本未命中密钥时的本地空响应回退。
+response if ${url} ~= /^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&ack.*/i then response.body.mock("text", "", 200)
+
+[Script]
+response if ${url} ~= /^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|get_watch)(\?(.*))?$/i then script("https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/scripts/YouTube.js") with tag="YouTube广告过滤", requires_body=true, binary_body_mode=true, timeout=10
+
+[MitM]
+hostname = youtubei.googleapis.com, *.googlevideo.com
