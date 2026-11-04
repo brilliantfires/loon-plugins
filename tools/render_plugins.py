@@ -10,6 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = ROOT / "sources" / "original"
 PLUGINS = ROOT / "plugins"
+SCRIPTS = ROOT / "scripts"
 REPO_BASE = "https://brilliantfires.github.io/loon-plugins"
 LOCAL_SCRIPT_PREFIX = "http://192.168.3.35:18765/"
 BILIBILI_DEPENDENCIES = {
@@ -187,7 +188,7 @@ PLUGIN_DEFS = [
     {
         "id": "Weibo",
         "name": "微博",
-        "desc": "过滤开屏、信息流、评论、搜索、个人页与视频推广；提供多组独立开关。",
+        "desc": "过滤开屏、信息流、评论、搜索、个人页与视频推广；保留“最新微博”和“全部关注”分组，并提供多组独立开关。",
         "source": "loon-zhihu/Weibo.lpx",
         "homepage": "https://hub.kelee.one",
         "author": "原规则与脚本：RuCu6、zmqcherish；本地整理：Codex",
@@ -440,8 +441,31 @@ def apply_special_transforms(plugin_id: str, body: str) -> str:
     return body
 
 
+def render_weibo_script() -> None:
+    source = SOURCES / "loon-zhihu" / "Weibo.js"
+    target = SCRIPTS / "Weibo.js"
+    text = source.read_text(encoding="utf-8")
+    text = replace_once(
+        text,
+        'if (["最新微博", "特别关注", "好友圈", "视频"].includes(ii?.title)) {',
+        'if (["最新微博", "全部关注", "特别关注", "好友圈", "视频"].includes(ii?.title)) {',
+        "Weibo default group buttons",
+    )
+    text = replace_once(
+        text,
+        '''                    if (ii?.title === "最新微博") {
+                      ii.title = "微博";
+                    }
+''',
+        "",
+        "Weibo latest feed title",
+    )
+    target.write_text(text, encoding="utf-8")
+
+
 def main() -> None:
     PLUGINS.mkdir(parents=True, exist_ok=True)
+    SCRIPTS.mkdir(parents=True, exist_ok=True)
     catalog = []
     for item in PLUGIN_DEFS:
         source = SOURCES / item["source"]
@@ -467,7 +491,8 @@ def main() -> None:
         json.dumps(catalog, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
-    print(f"Rendered {len(catalog)} plugins")
+    render_weibo_script()
+    print(f"Rendered {len(catalog)} plugins and Weibo script")
 
 
 if __name__ == "__main__":

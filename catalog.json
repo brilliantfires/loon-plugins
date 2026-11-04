@@ -114,7 +114,7 @@
   {
     "id": "Weibo",
     "name": "微博",
-    "desc": "过滤开屏、信息流、评论、搜索、个人页与视频推广；提供多组独立开关。",
+    "desc": "过滤开屏、信息流、评论、搜索、个人页与视频推广；保留“最新微博”和“全部关注”分组，并提供多组独立开关。",
     "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/Weibo.lpx",
     "source": "sources/original/loon-zhihu/Weibo.lpx"
   },
