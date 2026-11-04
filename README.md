@@ -8,38 +8,38 @@
 
 | 应用 | 导入地址 |
 | --- | --- |
-| 12306 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/12306.lpx` |
-| 百度网盘 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/BaiduNetdisk.lpx` |
-| 哔哩哔哩 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Bilibili.lpx` |
-| 菜鸟 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Cainiao.lpx` |
-| 酷安 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Coolapk.lpx` |
-| 豆瓣 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Douban.lpx` |
-| 闲鱼 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Goofish.lpx` |
-| 京东 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/JD.lpx` |
-| 瑞幸咖啡 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/LuckinCoffee.lpx` |
-| 麦当劳 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/McDonalds.lpx` |
-| 网易云音乐 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/NeteaseCloudMusic.lpx` |
-| 顺丰速运 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/SFExpress.lpx` |
-| 淘宝 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Taobao.lpx` |
-| 淘票票 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Taopiaopiao.lpx` |
-| 百度贴吧 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Tieba.lpx` |
-| 微信 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/WeChat.lpx` |
-| 微博 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Weibo.lpx` |
-| 小红书 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Xiaohongshu.lpx` |
-| 小象超市 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Xiaoxiang.lpx` |
-| YouTube | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/YouTube.lpx` |
-| 知乎 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Zhihu.lpx` |
-| 转转 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Zhuanzhuan.lpx` |
-| 高德地图 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Amap.lpx` |
-| 滴滴 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Didi.lpx` |
-| 得物 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Dewu.lpx` |
-| 京东外卖 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/JD-Takeout.lpx` |
-| 拼多多 | `https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Pinduoduo.lpx` |
+| 12306 | `https://brilliantfires.github.io/loon-plugins/plugins/12306.lpx` |
+| 百度网盘 | `https://brilliantfires.github.io/loon-plugins/plugins/BaiduNetdisk.lpx` |
+| 哔哩哔哩 | `https://brilliantfires.github.io/loon-plugins/plugins/Bilibili.lpx` |
+| 菜鸟 | `https://brilliantfires.github.io/loon-plugins/plugins/Cainiao.lpx` |
+| 酷安 | `https://brilliantfires.github.io/loon-plugins/plugins/Coolapk.lpx` |
+| 豆瓣 | `https://brilliantfires.github.io/loon-plugins/plugins/Douban.lpx` |
+| 闲鱼 | `https://brilliantfires.github.io/loon-plugins/plugins/Goofish.lpx` |
+| 京东 | `https://brilliantfires.github.io/loon-plugins/plugins/JD.lpx` |
+| 瑞幸咖啡 | `https://brilliantfires.github.io/loon-plugins/plugins/LuckinCoffee.lpx` |
+| 麦当劳 | `https://brilliantfires.github.io/loon-plugins/plugins/McDonalds.lpx` |
+| 网易云音乐 | `https://brilliantfires.github.io/loon-plugins/plugins/NeteaseCloudMusic.lpx` |
+| 顺丰速运 | `https://brilliantfires.github.io/loon-plugins/plugins/SFExpress.lpx` |
+| 淘宝 | `https://brilliantfires.github.io/loon-plugins/plugins/Taobao.lpx` |
+| 淘票票 | `https://brilliantfires.github.io/loon-plugins/plugins/Taopiaopiao.lpx` |
+| 百度贴吧 | `https://brilliantfires.github.io/loon-plugins/plugins/Tieba.lpx` |
+| 微信 | `https://brilliantfires.github.io/loon-plugins/plugins/WeChat.lpx` |
+| 微博 | `https://brilliantfires.github.io/loon-plugins/plugins/Weibo.lpx` |
+| 小红书 | `https://brilliantfires.github.io/loon-plugins/plugins/Xiaohongshu.lpx` |
+| 小象超市 | `https://brilliantfires.github.io/loon-plugins/plugins/Xiaoxiang.lpx` |
+| YouTube | `https://brilliantfires.github.io/loon-plugins/plugins/YouTube.lpx` |
+| 知乎 | `https://brilliantfires.github.io/loon-plugins/plugins/Zhihu.lpx` |
+| 转转 | `https://brilliantfires.github.io/loon-plugins/plugins/Zhuanzhuan.lpx` |
+| 高德地图 | `https://brilliantfires.github.io/loon-plugins/plugins/Amap.lpx` |
+| 滴滴 | `https://brilliantfires.github.io/loon-plugins/plugins/Didi.lpx` |
+| 得物 | `https://brilliantfires.github.io/loon-plugins/plugins/Dewu.lpx` |
+| 京东外卖 | `https://brilliantfires.github.io/loon-plugins/plugins/JD-Takeout.lpx` |
+| 拼多多 | `https://brilliantfires.github.io/loon-plugins/plugins/Pinduoduo.lpx` |
 
-GitHub Pages 使用相同路径，例如：
+GitHub Raw 使用相同路径，例如：
 
 ```text
-https://brilliantfires.github.io/loon-plugins/plugins/12306.lpx
+https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/12306.lpx
 ```
 
 如果 Raw 地址访问不稳定，可改用 jsDelivr 的固定分支地址：
@@ -58,7 +58,7 @@ https://cdn.jsdelivr.net/gh/brilliantfires/loon-plugins@main/plugins/12306.lpx
 
 ## 更新流程
 
-最终导入文件位于 `plugins/`，公共地址使用 `main` 分支。文件路径不发生变化时，推送更新后无需重新修改导入链接。
+最终导入文件位于 `plugins/`，公共地址使用已构建的 GitHub Pages。文件路径不发生变化时，推送更新后无需重新修改导入链接。
 
 直接修改最终插件：
 

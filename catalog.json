@@ -3,189 +3,189 @@
     "id": "12306",
     "name": "12306",
     "desc": "过滤开屏广告和应用内推广入口；应用内推广过滤可独立关闭。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/12306.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/12306.lpx",
     "source": "sources/original/loon-zhihu/12306-Reject-JSON-Test.lpx"
   },
   {
     "id": "BaiduNetdisk",
     "name": "百度网盘",
     "desc": "过滤广告、活动和推荐接口，并精简小说、短剧、打印及求职入口。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/BaiduNetdisk.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/BaiduNetdisk.lpx",
     "source": "sources/original/loon-zhihu/BaiduNetdisk.lpx"
   },
   {
     "id": "Bilibili",
     "name": "哔哩哔哩",
     "desc": "默认仅清理明确广告。评论、动态、视频页扩展、互动弹幕、空降助手、播放增强等高风险功能均由独立开关控制并默认关闭。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Bilibili.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/Bilibili.lpx",
     "source": "sources/original/Bilibili-Loon/Bilibili-Ads-Full.lpx"
   },
   {
     "id": "Cainiao",
     "name": "菜鸟",
     "desc": "过滤菜鸟广告并提供每日现金任务隐藏开关；每日任务会清空任务接口，异常时可单独关闭。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Cainiao.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/Cainiao.lpx",
     "source": "sources/original/Cainiao-Loon/Cainiao-Ads.lpx"
   },
   {
     "id": "Coolapk",
     "name": "酷安",
     "desc": "过滤开屏、信息流、评论与热词推广，并缩短开屏等待时间；当前仍属待实机验证版本。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Coolapk.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/Coolapk.lpx",
     "source": "sources/original/loon-zhihu/Coolapk-Splash-Timeout-Test.lpx"
   },
   {
     "id": "Douban",
     "name": "豆瓣",
     "desc": "移除开屏、信息流、首页横幅和搜索填充词，并关闭开屏 SDK 的三个开关字段。仅适用于 IPA 签名版豆瓣。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Douban.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/Douban.lpx",
     "source": "sources/original/Douban-Loon/Douban.lpx"
   },
   {
     "id": "Goofish",
     "name": "闲鱼",
     "desc": "过滤开屏、推荐、搜索和页面推广。场景恢复候选拦截尚未实机验证，默认关闭。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Goofish.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/Goofish.lpx",
     "source": "sources/original/loon-zhihu/Goofish-Integrated-Test.lpx"
   },
   {
     "id": "JD",
     "name": "京东",
     "desc": "过滤开屏、首页、个人页、订单与物流页面推广，并处理京东页面配置。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/JD.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/JD.lpx",
     "source": "sources/original/loon-zhihu/JD-Integrated.lpx"
   },
   {
     "id": "LuckinCoffee",
     "name": "瑞幸咖啡",
     "desc": "过滤开屏、弹窗、活动及推广接口。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/LuckinCoffee.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/LuckinCoffee.lpx",
     "source": "sources/original/loon-zhihu/LuckinCoffee.lpx"
   },
   {
     "id": "McDonalds",
     "name": "麦当劳",
     "desc": "通过将开屏投放窗口设为过期并清理推广弹窗来去广告；两个功能可独立关闭。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/McDonalds.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/McDonalds.lpx",
     "source": "sources/original/loon-zhihu/McDonalds-Ads-v2-Test.lpx"
   },
   {
     "id": "NeteaseCloudMusic",
     "name": "网易云音乐",
     "desc": "过滤首页、发现页、评论与个人页推广；提供首页和底栏等独立开关。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/NeteaseCloudMusic.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/NeteaseCloudMusic.lpx",
     "source": "sources/original/loon-zhihu/NeteaseCloudMusic.lpx"
   },
   {
     "id": "SFExpress",
     "name": "顺丰速运",
     "desc": "过滤广告接口、积分商城推荐和首页指定推广模块。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/SFExpress.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/SFExpress.lpx",
     "source": "sources/original/loon-zhihu/SFExpress.lpx"
   },
   {
     "id": "Taobao",
     "name": "淘宝",
     "desc": "过滤开屏图片、视频和活动资源，并处理原规则中的相关接口。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Taobao.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/Taobao.lpx",
     "source": "sources/original/loon-zhihu/Taobao.lpx"
   },
   {
     "id": "Taopiaopiao",
     "name": "淘票票",
     "desc": "过滤广告弹窗、悬浮推广、搜索填充词、横幅和猜你喜欢。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Taopiaopiao.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/Taopiaopiao.lpx",
     "source": "sources/original/loon-zhihu/Taopiaopiao.lpx"
   },
   {
     "id": "Tieba",
     "name": "百度贴吧",
     "desc": "过滤开屏、信息流和帖内推广并精简页面；推荐页视频帖过滤可单独关闭。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Tieba.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/Tieba.lpx",
     "source": "sources/original/loon-zhihu/Tieba.lpx"
   },
   {
     "id": "WeChat",
     "name": "微信",
     "desc": "合并微信公众号与常用微信小程序的广告、推荐和推广过滤。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/WeChat.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/WeChat.lpx",
     "source": "sources/original/WeChat-MiniPrograms-Loon/WeChat-MiniPrograms.lpx"
   },
   {
     "id": "Weibo",
     "name": "微博",
     "desc": "过滤开屏、信息流、评论、搜索、个人页与视频推广；提供多组独立开关。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Weibo.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/Weibo.lpx",
     "source": "sources/original/loon-zhihu/Weibo.lpx"
   },
   {
     "id": "Xiaohongshu",
     "name": "小红书",
     "desc": "过滤开屏、信息流和搜索推广，并处理图片、实况照片和视频保存；功能可独立控制。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Xiaohongshu.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/Xiaohongshu.lpx",
     "source": "sources/original/loon-zhihu/Xiaohongshu.lpx"
   },
   {
     "id": "Xiaoxiang",
     "name": "小象超市",
     "desc": "过滤开屏、悬浮推广、横幅、商品推荐和广告配置字段。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Xiaoxiang.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/Xiaoxiang.lpx",
     "source": "sources/original/loon-zhihu/Xiaoxiang.lpx"
   },
   {
     "id": "YouTube",
     "name": "YouTube",
     "desc": "过滤视频、信息流、搜索和 Shorts 广告。需要启用 MitM over HTTP/2 与 QUIC 回退保护。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/YouTube.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/YouTube.lpx",
     "source": "sources/original/loon-zhihu/YouTube.lpx"
   },
   {
     "id": "Zhihu",
     "name": "知乎",
     "desc": "过滤开屏、回答广告、回答流广告、首页与搜索浮层推广。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Zhihu.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/Zhihu.lpx",
     "source": "sources/original/loon-zhihu/Zhihu-Splash.lpx"
   },
   {
     "id": "Zhuanzhuan",
     "name": "转转",
     "desc": "过滤开屏、推广弹窗、信息流和商品推荐，并精简“我的”页面。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Zhuanzhuan.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/Zhuanzhuan.lpx",
     "source": "sources/original/loon-zhihu/Zhuanzhuan.lpx"
   },
   {
     "id": "Amap",
     "name": "高德地图",
     "desc": "移除开屏、首页推荐、搜索推荐、打车广告、地点推荐及广告，并精简“我的”页面。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Amap.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/Amap.lpx",
     "source": "sources/original/Amap-Loon/Amap.lpx"
   },
   {
     "id": "Didi",
     "name": "滴滴",
     "desc": "移除开屏、弹窗、横幅推广，处理首页与个人页配置并精简页面。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Didi.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/Didi.lpx",
     "source": "sources/original/Didi-Loon/Didi.lpx"
   },
   {
     "id": "Dewu",
     "name": "得物",
     "desc": "移除开屏、弹窗、搜索词、热搜、推荐信息流，并精简消息与“我的”页面。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Dewu.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/Dewu.lpx",
     "source": "sources/original/Dewu-Loon/Dewu.lpx"
   },
   {
     "id": "JD-Takeout",
     "name": "京东外卖",
     "desc": "移除首页、点评、购物车及“我的”页面推荐，精简搜索发现和搜索榜单。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/JD-Takeout.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/JD-Takeout.lpx",
     "source": "sources/original/JD-Takeout-Loon/JD-Takeout.lpx"
   },
   {
     "id": "Pinduoduo",
     "name": "拼多多",
     "desc": "移除开屏、底栏多多视频、会场入口、聊天推荐及推广，并精简首页和个人中心。",
-    "plugin_url": "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/plugins/Pinduoduo.lpx",
+    "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/Pinduoduo.lpx",
     "source": "sources/original/Pinduoduo-Loon/Pinduoduo.lpx"
   }
 ]

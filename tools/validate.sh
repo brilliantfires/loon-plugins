@@ -16,6 +16,9 @@ if rg -n '192\.168\.|127\.0\.0\.1|localhost|\[Mitm\]' plugins scripts; then
   exit 1
 fi
 
+name_check_file="$(mktemp)"
+trap 'rm -f "$name_check_file"' EXIT
+
 for file in plugins/*.lpx; do
   for key in name desc homepage tag system system_version loon_version author date; do
     if ! rg -q "^#!${key}=" "$file"; then
@@ -29,10 +32,11 @@ for file in plugins/*.lpx; do
     echo "$file: empty name" >&2
     exit 1
   fi
-  if [[ "$name" == *"去广告"* || "$name" == *"("* || "$name" == *"（"* ]]; then
+  if [[ "$name" == *"去广告"* || "$name" == *"增强"* || "$name" == *"整合"* || "$name" == *"测试"* || "$name" == *"补丁"* || "$name" == *"("* || "$name" == *"（"* ]]; then
     echo "$file: display name is not a concise application name: $name" >&2
     exit 1
   fi
+  printf '%s\t%s\n' "$(basename "$file" .lpx)" "$name" >> "$name_check_file"
 
   if ! rg -q '^\[(Rule|Rewrite|Script)\]$' "$file"; then
     echo "$file: no functional section" >&2
@@ -75,6 +79,13 @@ done < <(
 catalog_count="$(jq 'length' catalog.json)"
 if [[ "$catalog_count" -ne "$expected" ]]; then
   echo "catalog.json has $catalog_count entries, expected $expected" >&2
+  exit 1
+fi
+
+if ! diff -u \
+  <(LC_ALL=C sort "$name_check_file") \
+  <(jq -r '.[] | [.id, .name] | @tsv' catalog.json | LC_ALL=C sort); then
+  echo "Plugin display names must exactly match catalog.json application names" >&2
   exit 1
 fi
 

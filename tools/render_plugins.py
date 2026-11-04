@@ -10,19 +10,19 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = ROOT / "sources" / "original"
 PLUGINS = ROOT / "plugins"
-REPO_RAW = "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main"
+REPO_BASE = "https://brilliantfires.github.io/loon-plugins"
 LOCAL_SCRIPT_PREFIX = "http://192.168.3.35:18765/"
 BILIBILI_DEPENDENCIES = {
     "https://raw.githubusercontent.com/kokoryh/Sparkle/caf42c487706787431109cc105e93fcec8fc61cd/dist/bilibili.protobuf.response.js":
-        f"{REPO_RAW}/scripts/Bilibili.response.js",
+        f"{REPO_BASE}/scripts/Bilibili.response.js",
     "https://raw.githubusercontent.com/kokoryh/Sparkle/caf42c487706787431109cc105e93fcec8fc61cd/dist/bilibili.protobuf.request.js":
-        f"{REPO_RAW}/scripts/Bilibili.upstream-request.js",
+        f"{REPO_BASE}/scripts/Bilibili.upstream-request.js",
     "https://raw.githubusercontent.com/kokoryh/Sparkle/caf42c487706787431109cc105e93fcec8fc61cd/dist/webpage.bilibili.js":
-        f"{REPO_RAW}/scripts/Bilibili.webpage.js",
+        f"{REPO_BASE}/scripts/Bilibili.webpage.js",
     "https://raw.githubusercontent.com/kokoryh/Sparkle/caf42c487706787431109cc105e93fcec8fc61cd/jq/bilibili.tab.jq":
-        f"{REPO_RAW}/scripts/Bilibili.tab.jq",
+        f"{REPO_BASE}/scripts/Bilibili.tab.jq",
     "https://raw.githubusercontent.com/kokoryh/Sparkle/caf42c487706787431109cc105e93fcec8fc61cd/jq/bilibili.mine.jq":
-        f"{REPO_RAW}/scripts/Bilibili.mine.jq",
+        f"{REPO_BASE}/scripts/Bilibili.mine.jq",
 }
 
 ICONS = {
@@ -446,7 +446,7 @@ def main() -> None:
     for item in PLUGIN_DEFS:
         source = SOURCES / item["source"]
         body = strip_header(source.read_text(encoding="utf-8"))
-        body = body.replace(LOCAL_SCRIPT_PREFIX, f"{REPO_RAW}/scripts/")
+        body = body.replace(LOCAL_SCRIPT_PREFIX, f"{REPO_BASE}/scripts/")
         for old, new in BILIBILI_DEPENDENCIES.items():
             body = body.replace(old, new)
         body = body.replace("[Mitm]", "[MitM]")
@@ -459,7 +459,7 @@ def main() -> None:
                 "id": item["id"],
                 "name": item["name"],
                 "desc": item["desc"],
-                "plugin_url": f"{REPO_RAW}/plugins/{target.name}",
+                "plugin_url": f"{REPO_BASE}/plugins/{target.name}",
                 "source": f"sources/original/{item['source']}",
             }
         )
