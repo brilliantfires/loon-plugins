@@ -12,6 +12,18 @@ SOURCES = ROOT / "sources" / "original"
 PLUGINS = ROOT / "plugins"
 REPO_RAW = "https://raw.githubusercontent.com/brilliantfires/loon-plugins/main"
 LOCAL_SCRIPT_PREFIX = "http://192.168.3.35:18765/"
+BILIBILI_DEPENDENCIES = {
+    "https://raw.githubusercontent.com/kokoryh/Sparkle/caf42c487706787431109cc105e93fcec8fc61cd/dist/bilibili.protobuf.response.js":
+        f"{REPO_RAW}/scripts/Bilibili.response.js",
+    "https://raw.githubusercontent.com/kokoryh/Sparkle/caf42c487706787431109cc105e93fcec8fc61cd/dist/bilibili.protobuf.request.js":
+        f"{REPO_RAW}/scripts/Bilibili.upstream-request.js",
+    "https://raw.githubusercontent.com/kokoryh/Sparkle/caf42c487706787431109cc105e93fcec8fc61cd/dist/webpage.bilibili.js":
+        f"{REPO_RAW}/scripts/Bilibili.webpage.js",
+    "https://raw.githubusercontent.com/kokoryh/Sparkle/caf42c487706787431109cc105e93fcec8fc61cd/jq/bilibili.tab.jq":
+        f"{REPO_RAW}/scripts/Bilibili.tab.jq",
+    "https://raw.githubusercontent.com/kokoryh/Sparkle/caf42c487706787431109cc105e93fcec8fc61cd/jq/bilibili.mine.jq":
+        f"{REPO_RAW}/scripts/Bilibili.mine.jq",
+}
 
 ICONS = {
     "12306": "12306.png",
@@ -435,6 +447,8 @@ def main() -> None:
         source = SOURCES / item["source"]
         body = strip_header(source.read_text(encoding="utf-8"))
         body = body.replace(LOCAL_SCRIPT_PREFIX, f"{REPO_RAW}/scripts/")
+        for old, new in BILIBILI_DEPENDENCIES.items():
+            body = body.replace(old, new)
         body = body.replace("[Mitm]", "[MitM]")
         body = apply_special_transforms(item["id"], body)
         text = render_header(item) + body

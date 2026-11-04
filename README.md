@@ -85,7 +85,7 @@ git push
 ## 目录
 
 - `plugins/`：可直接导入的最终插件
-- `scripts/`：插件使用的固定脚本依赖
+- `scripts/`：插件使用的本地固定脚本、jq 资源和所需许可证
 - `sources/original/`：迁移前的本地原始文件
 - `catalog.json`：机器可读的插件清单
 - `tools/validate.sh`：结构、命名、依赖和重复规则检查
