@@ -1,0 +1,209 @@
+{
+  "old_plugin_count": 27,
+  "old_declared_counts": {
+    "rewrite": 362,
+    "script": 44,
+    "rule": 41
+  },
+  "old_unique_host_patterns": 157,
+  "lite_unique_host_patterns": 41,
+  "old_inventory": [
+    {
+      "app": "12306",
+      "rewrite": 2,
+      "script": 0,
+      "rule": 0,
+      "hosts": 2
+    },
+    {
+      "app": "Amap",
+      "rewrite": 22,
+      "script": 0,
+      "rule": 0,
+      "hosts": 6
+    },
+    {
+      "app": "BaiduNetdisk",
+      "rewrite": 8,
+      "script": 0,
+      "rule": 0,
+      "hosts": 1
+    },
+    {
+      "app": "Bilibili",
+      "rewrite": 28,
+      "script": 10,
+      "rule": 0,
+      "hosts": 10
+    },
+    {
+      "app": "Cainiao",
+      "rewrite": 9,
+      "script": 0,
+      "rule": 0,
+      "hosts": 6
+    },
+    {
+      "app": "Coolapk",
+      "rewrite": 7,
+      "script": 0,
+      "rule": 0,
+      "hosts": 1
+    },
+    {
+      "app": "Dewu",
+      "rewrite": 9,
+      "script": 0,
+      "rule": 0,
+      "hosts": 1
+    },
+    {
+      "app": "Didi",
+      "rewrite": 21,
+      "script": 0,
+      "rule": 3,
+      "hosts": 10
+    },
+    {
+      "app": "Douban",
+      "rewrite": 5,
+      "script": 0,
+      "rule": 0,
+      "hosts": 3
+    },
+    {
+      "app": "Goofish",
+      "rewrite": 23,
+      "script": 0,
+      "rule": 0,
+      "hosts": 2
+    },
+    {
+      "app": "JD-Takeout",
+      "rewrite": 4,
+      "script": 0,
+      "rule": 0,
+      "hosts": 2
+    },
+    {
+      "app": "JD",
+      "rewrite": 8,
+      "script": 0,
+      "rule": 1,
+      "hosts": 1
+    },
+    {
+      "app": "LuckinCoffee",
+      "rewrite": 7,
+      "script": 0,
+      "rule": 0,
+      "hosts": 1
+    },
+    {
+      "app": "McDonalds",
+      "rewrite": 2,
+      "script": 0,
+      "rule": 0,
+      "hosts": 1
+    },
+    {
+      "app": "NeteaseCloudMusic",
+      "rewrite": 7,
+      "script": 6,
+      "rule": 6,
+      "hosts": 1
+    },
+    {
+      "app": "Pinduoduo",
+      "rewrite": 19,
+      "script": 0,
+      "rule": 12,
+      "hosts": 2
+    },
+    {
+      "app": "SFExpress",
+      "rewrite": 3,
+      "script": 0,
+      "rule": 0,
+      "hosts": 2
+    },
+    {
+      "app": "Taobao",
+      "rewrite": 8,
+      "script": 2,
+      "rule": 6,
+      "hosts": 3
+    },
+    {
+      "app": "Taopiaopiao",
+      "rewrite": 4,
+      "script": 0,
+      "rule": 0,
+      "hosts": 1
+    },
+    {
+      "app": "Tieba",
+      "rewrite": 11,
+      "script": 1,
+      "rule": 2,
+      "hosts": 2
+    },
+    {
+      "app": "WeChat",
+      "rewrite": 101,
+      "script": 0,
+      "rule": 5,
+      "hosts": 94
+    },
+    {
+      "app": "Weibo",
+      "rewrite": 17,
+      "script": 20,
+      "rule": 3,
+      "hosts": 3
+    },
+    {
+      "app": "Xiaohongshu",
+      "rewrite": 9,
+      "script": 4,
+      "rule": 1,
+      "hosts": 5
+    },
+    {
+      "app": "Xiaoxiang",
+      "rewrite": 8,
+      "script": 0,
+      "rule": 0,
+      "hosts": 3
+    },
+    {
+      "app": "YouTube",
+      "rewrite": 1,
+      "script": 1,
+      "rule": 2,
+      "hosts": 2
+    },
+    {
+      "app": "Zhihu",
+      "rewrite": 4,
+      "script": 0,
+      "rule": 0,
+      "hosts": 1
+    },
+    {
+      "app": "Zhuanzhuan",
+      "rewrite": 15,
+      "script": 0,
+      "rule": 0,
+      "hosts": 1
+    }
+  ],
+  "remote_equal_checked": [
+    "Bilibili",
+    "Weibo",
+    "Xiaohongshu",
+    "YouTube",
+    "NeteaseCloudMusic",
+    "WeChat"
+  ]
+}

@@ -2,6 +2,19 @@
 
 本地维护的 Loon 插件集合。插件显示名统一使用应用名称，功能说明放在描述中。
 
+## 只去广告的精简版
+
+新增两套自包含插件，均无 JS 和外部脚本依赖：
+
+| 版本 | 导入地址 | 默认设置 |
+| --- | --- | --- |
+| 仅去开屏 | https://brilliantfires.github.io/loon-plugins/lite/Splash-Only.lpx | 15 个 App，豆瓣以外默认开启 |
+| App 内去广告 | https://brilliantfires.github.io/loon-plugins/lite/InApp-Ads.lpx | 24 个 App 独立开关，默认全部关闭 |
+
+请先停用对应旧插件，避免叠加。精简版缩小了广告覆盖范围，尚未做手机能耗实测；App 开关不动态撤销静态 MitM 域名。不使用内部版时请停用整个插件。
+
+[安装与覆盖说明](lite/README.md) · [逐 App 审计](lite/AUDIT.md) · [下载精简包](https://brilliantfires.github.io/loon-plugins/lite/Loon-Ads-Lite-2026-11-05.zip)
+
 ## 导入
 
 在 Loon 的插件导入文本框中粘贴下面对应应用的地址，不需要添加 `loon://` 前缀。

@@ -1,0 +1,1017 @@
+{
+  "date": "2026-11-05",
+  "summary": {
+    "splash": {
+      "apps": [
+        "12306",
+        "Amap",
+        "Bilibili",
+        "Coolapk",
+        "Douban",
+        "Goofish",
+        "JD",
+        "McDonalds",
+        "Taobao",
+        "Tieba",
+        "Weibo",
+        "Xiaohongshu",
+        "Xiaoxiang",
+        "Zhihu",
+        "Zhuanzhuan"
+      ],
+      "hosts": [
+        "acs.m.goofish.com",
+        "ad.12306.cn",
+        "api.coolapk.com",
+        "api.douban.com",
+        "api.m.jd.com",
+        "api.mcd.cn",
+        "api.zhihu.com",
+        "app.bilibili.com",
+        "app.zhuanzhuan.com",
+        "bootpreload.uve.weibo.com",
+        "edith.xiaohongshu.com",
+        "frodo.douban.com",
+        "guide-acs.m.taobao.com",
+        "m5.amap.com",
+        "mall.meituan.com",
+        "sdkapp.uve.weibo.com",
+        "tiebac.baidu.com",
+        "wbapp.uve.weibo.com"
+      ],
+      "rules": 21,
+      "scripts": 0
+    },
+    "inapp": {
+      "apps": [
+        "12306",
+        "Amap",
+        "BaiduNetdisk",
+        "Bilibili",
+        "Cainiao",
+        "Coolapk",
+        "Dewu",
+        "Didi",
+        "Douban",
+        "Goofish",
+        "JD",
+        "LuckinCoffee",
+        "McDonalds",
+        "NeteaseCloudMusic",
+        "Pinduoduo",
+        "SFExpress",
+        "Taopiaopiao",
+        "Tieba",
+        "WeChat",
+        "Weibo",
+        "Xiaohongshu",
+        "Xiaoxiang",
+        "Zhihu",
+        "Zhuanzhuan"
+      ],
+      "hosts": [
+        "acs.m.goofish.com",
+        "acs.m.taobao.com",
+        "api.bilibili.com",
+        "api.coolapk.com",
+        "api.live.bilibili.com",
+        "api.m.jd.com",
+        "api.mcd.cn",
+        "api.pinduoduo.com",
+        "api.weibo.cn",
+        "api.zhihu.com",
+        "app.bilibili.com",
+        "app.dewu.com",
+        "app.zhuanzhuan.com",
+        "capi.lkcoffee.com",
+        "card.weibo.com",
+        "ccsp-egmas.sf-express.com",
+        "cn-acs.m.cainiao.com",
+        "edith.xiaohongshu.com",
+        "frodo.douban.com",
+        "g-acs.m.goofish.com",
+        "interface*.music.163.com",
+        "line3-h5-mobile-api.biligame.com",
+        "m5-zb.amap.com",
+        "m5.amap.com",
+        "mall.meituan.com",
+        "mobile.12306.cn",
+        "mp.weixin.qq.com",
+        "netflow-mtop.cainiao.com",
+        "pan.baidu.com",
+        "portal-portm.meituan.com",
+        "rec.xiaohongshu.com",
+        "res.xiaojukeji.com",
+        "tiebac.baidu.com",
+        "weibo.com",
+        "www.xiaohongshu.com"
+      ],
+      "rules": 50,
+      "scripts": 0
+    }
+  },
+  "rules": [
+    {
+      "mode": "splash",
+      "app": "12306",
+      "hosts": [
+        "ad.12306.cn"
+      ],
+      "pattern": "/^https:\\/\\/ad\\.12306\\.cn\\/ad\\/ser\\/getAdList(?:\\?|$)/i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "仅开屏广告接口",
+      "source": "plugins/12306.lpx"
+    },
+    {
+      "mode": "splash",
+      "app": "Amap",
+      "hosts": [
+        "m5.amap.com"
+      ],
+      "pattern": "/^https:\\/\\/m5\\.amap\\.com\\/ws\\/valueadded\\/alimama\\/splash_screen\\?/i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "仅开屏接口",
+      "source": "plugins/Amap.lpx"
+    },
+    {
+      "mode": "splash",
+      "app": "Amap",
+      "hosts": [
+        "m5.amap.com"
+      ],
+      "pattern": "/^https:\\/\\/m5\\.amap\\.com\\/ws\\/shield\\/frogserver\\/aocs\\/updatable\\/1(?:\\?|$)/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (del(.data.splashscreen, .data.SplashScreenControl, .data.splashview_config)) catch $original else . end`)",
+      "phase": "response",
+      "note": "只移除启动配置内三个开屏字段",
+      "source": "plugins/Amap.lpx"
+    },
+    {
+      "mode": "splash",
+      "app": "Bilibili",
+      "hosts": [
+        "app.bilibili.com"
+      ],
+      "pattern": "/^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/splash\\/(show|event\\/list2)\\?/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.data | type) == \"object\" then .data |= with_entries(if .key | IN(\"show\", \"event_list\") then .value = [] else . end) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "保留原开屏列表清理",
+      "source": "plugins/Bilibili.lpx"
+    },
+    {
+      "mode": "splash",
+      "app": "Bilibili",
+      "hosts": [
+        "app.bilibili.com"
+      ],
+      "pattern": "/^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/splash\\/list\\?/i",
+      "action": "response.body.mock(\"json\", `{\"code\":0,\"message\":\"OK\",\"ttl\":1,\"data\":{\"max_time\":0,\"min_interval\":31536000,\"pull_interval\":31536000,\"keep_ids\":[],\"show\":[],\"list\":[{}],\"splash_request_id\":\"\"}}`, 200)",
+      "phase": "response",
+      "note": "保留原开屏模拟响应；不处理视频播放",
+      "source": "plugins/Bilibili.lpx"
+    },
+    {
+      "mode": "splash",
+      "app": "Coolapk",
+      "hosts": [
+        "api.coolapk.com"
+      ],
+      "pattern": "/^https:\\/\\/api\\.coolapk\\.com\\/v6\\/main\\/init(?:\\?|$)/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.data|type)==\"array\" then .data |= map(if type==\"object\" and (.extraDataArr|type)==\"object\" then .extraDataArr |= (if has(\"SplashAd.Type\") then .[\"SplashAd.Type\"]=\"\" | .[\"SplashAd.resumeType\"]=\"\" | .[\"SplashAd.hType\"]=\"\" | .[\"SplashAd.onResume\"]=0 | if has(\"SplashAd.timeout\") then .[\"SplashAd.timeout\"]=\"1\" else . end else . end) else . end) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "保留所有初始化卡片；仅修改旧版已有开屏字段和等待参数；新组合待实测",
+      "source": "plugins/Coolapk.lpx"
+    },
+    {
+      "mode": "splash",
+      "app": "Douban",
+      "hosts": [
+        "api.douban.com"
+      ],
+      "pattern": "/^https:\\/\\/api\\.douban\\.com\\/v\\d\\/app_ads\\/splash/i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "仅开屏广告接口；沿用原插件签名版限制",
+      "source": "plugins/Douban.lpx"
+    },
+    {
+      "mode": "splash",
+      "app": "Douban",
+      "hosts": [
+        "frodo.douban.com"
+      ],
+      "pattern": "/^https:\\/\\/frodo\\.douban\\.com\\/api\\/v2\\/feature_switch(?:\\?|$)/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (.splash_sdk_info=[] | .enable_splash_client_bid=false | .splash_client_bid_use_preload=false) catch $original else . end`)",
+      "phase": "response",
+      "note": "保留三个开屏 SDK 配置字段处理",
+      "source": "plugins/Douban.lpx"
+    },
+    {
+      "mode": "splash",
+      "app": "Goofish",
+      "hosts": [
+        "acs.m.goofish.com"
+      ],
+      "pattern": "/^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idlecommerce\\.splash\\.ads\\//i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "仅明确开屏接口；排除 scene.restore 全场景拦截",
+      "source": "plugins/Goofish.lpx"
+    },
+    {
+      "mode": "splash",
+      "app": "JD",
+      "hosts": [
+        "api.m.jd.com"
+      ],
+      "pattern": "/^https:\\/\\/api\\.m\\.jd\\.com\\/client\\.action\\?(?:[^#]*&)?functionId=(?:start)(?:&|$)/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if has(\"images\") then .images=[] else . end | if has(\"showTimesDaily\") then .showTimesDaily=0 else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "仅 start 开屏图片和展示次数",
+      "source": "plugins/JD.lpx"
+    },
+    {
+      "mode": "splash",
+      "app": "McDonalds",
+      "hosts": [
+        "api.mcd.cn"
+      ],
+      "pattern": "/^https:\\/\\/api\\.mcd\\.cn\\/bff\\/portal\\/home\\/splash(?:\\?|$)/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.data.list | type) == \"array\" then .data.list |= map(.countDown=0 | .beginTime=\"2000-01-01 00:00:00\" | .endTime=\"2000-01-01 00:00:00\" | if (.showTimeList | type) == \"array\" then .showTimeList |= map(.beginDate=\"2000-01-01\" | .endDate=\"2000-01-01\") else . end) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "沿用开屏投放过期方案",
+      "source": "plugins/McDonalds.lpx"
+    },
+    {
+      "mode": "splash",
+      "app": "Taobao",
+      "hosts": [
+        "guide-acs.m.taobao.com"
+      ],
+      "pattern": "/^https:\\/\\/guide-acs\\.m\\.taobao\\.com\\/gw\\/mtop\\.taobao\\.wireless\\.home\\.splash\\.awesome\\.get(?:\\/|\\?|$)/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.data.containers.splash_home_base.base.sections|type)==\"array\" then (.data.containers.splash_home_base.base.sections[] | select(type==\"object\") | .bizData[\"taobao-splash\"].data | select(type==\"array\")) |= map(if type==\"object\" then . + {waitTime:\"0\",times:\"0\",hotStart:\"false\",haveVoice:\"false\",hideTBLogo:\"false\",enable4G:\"false\",coldStart:\"false\",startTime:\"3818332800000\",endTime:\"3818419199000\",gmtStart:\"2090-12-31 00:00:00\",gmtEnd:\"2090-12-31 23:59:59\",gmtStartMs:\"3818332800000\",gmtEndMs:\"3818419199000\"} | (if .imgUrl then .imgUrl=\"\" else . end) | (if .videoUrl then .videoUrl=\"\" else . end) else . end) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "从原 JS 迁移开屏配置分支；不拦截普通视频或通用活动模板",
+      "source": "scripts/Taobao.js"
+    },
+    {
+      "mode": "splash",
+      "app": "Tieba",
+      "hosts": [
+        "tiebac.baidu.com"
+      ],
+      "pattern": "/^https?:\\/\\/tiebac\\.baidu\\.com\\/c\\/s\\/sync(?:\\?|$)/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (del(.home_screen_ad)) catch $original else . end`)",
+      "phase": "response",
+      "note": "仅已知 home_screen_ad 字段；不保证覆盖其他 SDK 开屏",
+      "source": "plugins/Tieba.lpx"
+    },
+    {
+      "mode": "splash",
+      "app": "Xiaohongshu",
+      "hosts": [
+        "edith.xiaohongshu.com"
+      ],
+      "pattern": "/^https:\\/\\/edith\\.xiaohongshu\\.com\\/api\\/sns\\/v1\\/system_service\\/config(?:\\?|$)/",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (del(.data.splash)) catch $original else . end`)",
+      "phase": "response",
+      "note": "不删除商店、主题和加载图片等非广告配置",
+      "source": "scripts/Xiaohongshu.js"
+    },
+    {
+      "mode": "splash",
+      "app": "Xiaohongshu",
+      "hosts": [
+        "edith.xiaohongshu.com"
+      ],
+      "pattern": "/^https:\\/\\/edith\\.xiaohongshu\\.com\\/api\\/sns\\/v2\\/system_service\\/splash_config(?:\\?|$)/",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.data.ads_groups|type)==\"array\" then .data.ads_groups |= map(if type==\"object\" then .start_time=3818332800 | .end_time=3818419199 | if (.ads|type)==\"array\" then .ads |= map(if type==\"object\" then .start_time=3818332800 | .end_time=3818419199 else . end) else . end else . end) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "沿用原开屏投放时间处理，无媒体缓存",
+      "source": "scripts/Xiaohongshu.js"
+    },
+    {
+      "mode": "splash",
+      "app": "Xiaoxiang",
+      "hosts": [
+        "mall.meituan.com"
+      ],
+      "pattern": "/^https:\\/\\/mall\\.meituan\\.com\\/api\\/c\\/homepage\\/splash/i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "仅开屏广告接口",
+      "source": "plugins/Xiaoxiang.lpx"
+    },
+    {
+      "mode": "splash",
+      "app": "Zhihu",
+      "hosts": [
+        "api.zhihu.com"
+      ],
+      "pattern": "/^https:\\/\\/api\\.zhihu\\.com\\/commercial_api\\/(?:real_time_launch_v2|launch_v2)(?:\\?|$)/",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.launch|type)==\"string\" then .launch |= (. as $original | try (fromjson | .ads=[] | tojson) catch $original) elif (.launch|type)==\"object\" then .launch.ads=[] else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "只清空 launch.ads，保留其他浮层和原字符串格式",
+      "source": "plugins/Zhihu.lpx"
+    },
+    {
+      "mode": "splash",
+      "app": "Zhuanzhuan",
+      "hosts": [
+        "app.zhuanzhuan.com"
+      ],
+      "pattern": "/^https:\\/\\/app\\.zhuanzhuan\\.com\\/zz\\/v2\\/zzlogic\\/getOpenScreen(?:\\?|$)/i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "仅开屏接口",
+      "source": "plugins/Zhuanzhuan.lpx"
+    },
+    {
+      "mode": "splash",
+      "app": "Weibo",
+      "hosts": [
+        "bootpreload.uve.weibo.com"
+      ],
+      "pattern": "/^https:\\/\\/bootpreload\\.uve\\.weibo\\.com\\/v[12]\\/ad\\/preload(?:\\?|$)/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.ads|type)==\"array\" then .ads |= map(if type==\"object\" then .start_time=3818332800 | .end_time=3818419199 | .daily_display_cnt=50 | .display_duration=0 else . end) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "迁移原开屏预加载分支",
+      "source": "scripts/Weibo.js"
+    },
+    {
+      "mode": "splash",
+      "app": "Weibo",
+      "hosts": [
+        "wbapp.uve.weibo.com"
+      ],
+      "pattern": "/^https:\\/\\/wbapp\\.uve\\.weibo\\.com\\/(?:preload\\/get_ad|wbapplua\\/wbpullad\\.lua)(?:\\?|$)/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.cached_ad.ads|type)==\"array\" then .cached_ad.ads |= map(if type==\"object\" then .show_count=50 | .duration=0 | .start_date=3818332800 | .end_date=3818419199 else . end) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "迁移原开屏缓存分支",
+      "source": "scripts/Weibo.js"
+    },
+    {
+      "mode": "splash",
+      "app": "Weibo",
+      "hosts": [
+        "sdkapp.uve.weibo.com"
+      ],
+      "pattern": "/^https:\\/\\/sdkapp\\.uve\\.weibo\\.com\\/interface\\/sdk\\/sdkad\\.php(?:\\?|$)/i",
+      "action": "response.body.replace(/\"show_push_splash_ad\"\\s*:\\s*true/, `\"show_push_splash_ad\":false`) | response.body.replace(/\"background_delay_display_time\"\\s*:\\s*\\d+/, `\"background_delay_display_time\":31536000`) | response.body.replace(/\"lastAdShow_delay_display_time\"\\s*:\\s*\\d+/, `\"lastAdShow_delay_display_time\":31536000`) | response.body.replace(/\"realtime_ad_video_stall_time\"\\s*:\\s*\\d+/, `\"realtime_ad_video_stall_time\":0`) | response.body.replace(/\"realtime_ad_timeout_duration\"\\s*:\\s*\\d+/, `\"realtime_ad_timeout_duration\":0`) | response.body.replace(/\"displaytime\"\\s*:\\s*\\d+/, `\"displaytime\":0`) | response.body.replace(/\"displayintervel\"\\s*:\\s*\\d+/, `\"displayintervel\":31536000`) | response.body.replace(/\"allowdaydisplaynum\"\\s*:\\s*\\d+/, `\"allowdaydisplaynum\":0`)",
+      "phase": "response",
+      "note": "定点替换已知开屏标量字段；兼容 JSON+OK；不对广告数组做正则删除",
+      "source": "scripts/Weibo.js"
+    },
+    {
+      "mode": "inapp",
+      "app": "12306",
+      "hosts": [
+        "mobile.12306.cn"
+      ],
+      "pattern": "/^https:\\/\\/mobile\\.12306\\.cn\\/otsmobile\\/app\\/mgs\\// && ${request.header['operation-type']} == \"com.cars.otsmobile.integration.activityBanner\"",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "仅 activityBanner；不拦整个首页、会员问答或支付完成入口",
+      "source": "plugins/12306.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Amap",
+      "hosts": [
+        "m5.amap.com"
+      ],
+      "pattern": "/^https:\\/\\/m5\\.amap\\.com\\/ws\\/shield\\/frogserver\\/aocs\\/updatable\\/1(?:\\?|$)/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (del(.data.adStatementConfig, .data.adCustomerRetainArchitecture, .data.adImEntryConfig, .data.adVenueConfig, .data.EndNaviC3AdCard)) catch $original else . end`)",
+      "phase": "response",
+      "note": "只保留原配置中的明确广告字段；删除远程 jq 依赖",
+      "source": "plugins/Amap.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Amap",
+      "hosts": [
+        "m5-zb.amap.com"
+      ],
+      "pattern": "/^https:\\/\\/m5-zb\\.amap\\.com\\/ws\\/promotion-web\\/resource(\\/home)?\\?/i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "广告推广资源接口",
+      "source": "plugins/Amap.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "BaiduNetdisk",
+      "hosts": [
+        "pan.baidu.com"
+      ],
+      "pattern": "/^https:\\/\\/pan\\.baidu\\.com\\/rest\\/\\d\\.\\d\\/pcs\\/adv\\?/i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "仅广告接口；恢复 getconfig/getsyscfg 和页面入口",
+      "source": "plugins/BaiduNetdisk.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Bilibili",
+      "hosts": [
+        "line3-h5-mobile-api.biligame.com"
+      ],
+      "pattern": "/^https:\\/\\/line3-h5-mobile-api\\.biligame\\.com\\/game\\/live\\/large_card_material\\?/i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "保留原生广告与直播购物浮层过滤；无 Protobuf 脚本",
+      "source": "plugins/Bilibili.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Bilibili",
+      "hosts": [
+        "api.live.bilibili.com"
+      ],
+      "pattern": "/^https:\\/\\/api\\.live\\.bilibili\\.com\\/xlive\\/e-commerce-interface\\/v1\\/ecommerce-user\\/get_shopping_info\\?/i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "保留原生广告与直播购物浮层过滤；无 Protobuf 脚本",
+      "source": "plugins/Bilibili.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Bilibili",
+      "hosts": [
+        "api.live.bilibili.com"
+      ],
+      "pattern": "/^https:\\/\\/api\\.live\\.bilibili\\.com\\/xlive\\/app-interface\\/v2\\/index\\/feed\\?/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.data.card_list | type) == \"array\" then .data.card_list |= map(select(.card_type != \"banner_v2\" and .card_type != \"activity_card_v1\")) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "保留原生广告与直播购物浮层过滤；无 Protobuf 脚本",
+      "source": "plugins/Bilibili.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Bilibili",
+      "hosts": [
+        "api.live.bilibili.com"
+      ],
+      "pattern": "/^https:\\/\\/api\\.live\\.bilibili\\.com\\/xlive\\/app-room\\/v1\\/index\\/getInfoBy(Room|User)\\?/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (del(.data.shopping_info, .data.activity_banner_info)) catch $original else . end`)",
+      "phase": "response",
+      "note": "保留原生广告与直播购物浮层过滤；无 Protobuf 脚本",
+      "source": "plugins/Bilibili.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Bilibili",
+      "hosts": [
+        "app.bilibili.com"
+      ],
+      "pattern": "/^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/feed\\/index\\?/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.data.items | type) == \"array\" then .data.items |= map(select(.ad_info == null)) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "只按明确 ad_info/广告卡类型过滤",
+      "source": "plugins/Bilibili.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Bilibili",
+      "hosts": [
+        "app.bilibili.com"
+      ],
+      "pattern": "/^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/feed\\/index\\/story\\?/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.data.items | type) == \"array\" then .data.items |= map(select(.ad_info == null and (.card_goto | IN(\"vertical_ad_av\", \"vertical_ad_live\", \"vertical_ad_picture\") | not))) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "只按明确 ad_info/广告卡类型过滤",
+      "source": "plugins/Bilibili.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Bilibili",
+      "hosts": [
+        "api.bilibili.com"
+      ],
+      "pattern": "/^https:\\/\\/api\\.bilibili\\.com\\/x\\/vip\\/ads\\/materials\\?/i",
+      "action": "response.body.mock(\"json\", `{\"code\":-404,\"message\":\"-404\",\"ttl\":1,\"data\":null}`, 200)",
+      "phase": "response",
+      "note": "保留原生广告与直播购物浮层过滤；无 Protobuf 脚本",
+      "source": "plugins/Bilibili.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Bilibili",
+      "hosts": [
+        "api.bilibili.com"
+      ],
+      "pattern": "/^https:\\/\\/api\\.bilibili\\.com\\/pgc\\/activity\\/deliver\\/material\\/receive\\?/i",
+      "action": "response.body.mock(\"json\", `{\"code\":0,\"data\":{\"closeType\":\"close_win\",\"container\":[],\"showTime\":\"\"},\"message\":\"success\"}`, 200)",
+      "phase": "response",
+      "note": "保留原生广告与直播购物浮层过滤；无 Protobuf 脚本",
+      "source": "plugins/Bilibili.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Cainiao",
+      "hosts": [
+        "netflow-mtop.cainiao.com"
+      ],
+      "pattern": "/^https:\\/\\/netflow-mtop\\.cainiao\\.com\\/gw\\/mtop\\.cainiao\\.guoguo\\.nbnetflow\\.ads\\.index/i",
+      "action": "reject(404)",
+      "phase": "request",
+      "note": "仅独立广告接口；不改每日现金任务、会员或首页推荐",
+      "source": "plugins/Cainiao.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Cainiao",
+      "hosts": [
+        "cn-acs.m.cainiao.com"
+      ],
+      "pattern": "/^https:\\/\\/cn-acs\\.m\\.cainiao\\.com\\/gw\\/mtop\\.cainiao\\.adkeyword\\.get\\.cn/i",
+      "action": "reject(404)",
+      "phase": "request",
+      "note": "仅独立广告接口；不改每日现金任务、会员或首页推荐",
+      "source": "plugins/Cainiao.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Cainiao",
+      "hosts": [
+        "cn-acs.m.cainiao.com"
+      ],
+      "pattern": "/^https:\\/\\/cn-acs\\.m\\.cainiao\\.com\\/gw\\/mtop\\.cainiao\\.guoguo\\.nbnetflow\\.ads\\.m?show/i",
+      "action": "reject(404)",
+      "phase": "request",
+      "note": "仅独立广告接口；不改每日现金任务、会员或首页推荐",
+      "source": "plugins/Cainiao.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Coolapk",
+      "hosts": [
+        "api.coolapk.com"
+      ],
+      "pattern": "/^https:\\/\\/api\\.coolapk\\.com\\/v6\\/(?:main\\/(?:dataList|indexV8)|page\\/dataList)(?:\\?|$)/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.data|type)==\"array\" then .data |= map(select(if type==\"object\" then .entityTemplate != \"sponsorCard\" else true end)) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "只移除 sponsorCard，保留热搜、普通图片卡和推荐",
+      "source": "plugins/Coolapk.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Coolapk",
+      "hosts": [
+        "api.coolapk.com"
+      ],
+      "pattern": "/^https:\\/\\/api\\.coolapk\\.com\\/v6\\/feed\\/detail(?:\\?|$)/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.data|type)==\"object\" and (.data|has(\"detailSponsorCard\")) then .data.detailSponsorCard=[] else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "仅详情赞助卡；不筛评论 id 或删正常商品内容",
+      "source": "plugins/Coolapk.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Dewu",
+      "hosts": [
+        "app.dewu.com"
+      ],
+      "pattern": "/^https:\\/\\/app\\.dewu\\.com\\/api\\/v1\\/app\\/advertisement\\//i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "广告接口可能兼含开屏；不虚称为独立开屏接口",
+      "source": "plugins/Dewu.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Didi",
+      "hosts": [
+        "res.xiaojukeji.com"
+      ],
+      "pattern": "/^https:\\/\\/res\\.xiaojukeji\\.com\\/resapi\\/activity\\/mget\\?/i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "活动广告接口；不改证书校验、网络连通性或行程布局",
+      "source": "plugins/Didi.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Douban",
+      "hosts": [
+        "frodo.douban.com"
+      ],
+      "pattern": "/^https:\\/\\/frodo\\.douban\\.com\\/api\\/v\\d\\/movie\\/ad/i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "仅电影广告与首页广告横幅；沿用原签名版限制",
+      "source": "plugins/Douban.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Douban",
+      "hosts": [
+        "frodo.douban.com"
+      ],
+      "pattern": "/^https:\\/\\/frodo\\.douban\\.com\\/api\\/v\\d\\/home_banner/i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "仅电影广告与首页广告横幅；沿用原签名版限制",
+      "source": "plugins/Douban.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Goofish",
+      "hosts": [
+        "acs.m.goofish.com"
+      ],
+      "pattern": "/^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idlehome\\.home\\.nextfresh\\//i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.data.sections|type)==\"array\" then .data.sections |= map(select(if type==\"object\" then .data.clickParam.args.cardType != \"mamaAD\" else true end)) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "只移除 mamaAD；保留正常推荐和首页其他卡片",
+      "source": "plugins/Goofish.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Goofish",
+      "hosts": [
+        "acs.m.goofish.com"
+      ],
+      "pattern": "/^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idlehome\\.home\\.newitem\\.page\\//i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.data.sections|type)==\"array\" then .data.sections |= map(select(if type==\"object\" then .data.clickParam.args.cardType != \"mamaAD\" else true end)) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "只移除 mamaAD；保留正常推荐和首页其他卡片",
+      "source": "plugins/Goofish.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Goofish",
+      "hosts": [
+        "acs.m.goofish.com"
+      ],
+      "pattern": "/^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idle\\.local\\.home\\//i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.data.sections|type)==\"array\" then .data.sections |= map(select(if type==\"object\" then .template.cardEnum != \"ads\" else true end)) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "只移除 cardEnum=ads",
+      "source": "plugins/Goofish.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Goofish",
+      "hosts": [
+        "g-acs.m.goofish.com"
+      ],
+      "pattern": "/^https:\\/\\/g-acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idlemtopsearch\\.search\\//i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.data.resultList|type)==\"array\" then .data.resultList |= map(select(if type==\"object\" then .data.item.main.exContent.dislikeFeedback.clickParam.args.bizType != \"ad\" else true end)) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "只移除搜索明确广告，保留搜索前缀栏",
+      "source": "plugins/Goofish.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "JD",
+      "hosts": [
+        "api.m.jd.com"
+      ],
+      "pattern": "/^https:\\/\\/api\\.m\\.jd\\.com\\/client\\.action\\?(?:[^#]*&)?functionId=(?:deliverLayer|orderTrackBusiness)(?:&|$)/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (del(.bannerInfo) | if (.floors|type)==\"array\" then .floors |= map(select(.mId != \"banner\" and .mId != \"jdDeliveryBanner\")) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "仅物流页面横幅；不拦推荐、不改 HTTPDNS",
+      "source": "plugins/JD.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "LuckinCoffee",
+      "hosts": [
+        "capi.lkcoffee.com"
+      ],
+      "pattern": "/^https:\\/\\/capi\\.lkcoffee\\.com\\/resource\\/m\\/sys\\/app\\/adposNew/i",
+      "action": "reject(404)",
+      "phase": "request",
+      "note": "仅广告位接口；恢复公共模块、礼品卡与成长日历",
+      "source": "plugins/LuckinCoffee.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "McDonalds",
+      "hosts": [
+        "api.mcd.cn"
+      ],
+      "pattern": "/^https:\\/\\/api\\.mcd\\.cn\\/bff\\/portal\\/richpop\\/v2(?:\\?|$)/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (del(.data.pop)) catch $original else . end`)",
+      "phase": "response",
+      "note": "仅推广弹窗",
+      "source": "plugins/McDonalds.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "NeteaseCloudMusic",
+      "hosts": [
+        "interface*.music.163.com"
+      ],
+      "pattern": "/^https?:\\/\\/interface\\d?\\.music\\.163\\.com\\/e?api\\/(ocpc\\/)?ad\\//i",
+      "action": "response.body.mock(\"text\", \"\")",
+      "phase": "response",
+      "note": "仅独立广告响应；移除 AES/gzip 脚本及页面白名单",
+      "source": "plugins/NeteaseCloudMusic.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Pinduoduo",
+      "hosts": [
+        "api.pinduoduo.com"
+      ],
+      "pattern": "/^https:\\/\\/api\\.pinduoduo\\.com\\/order\\//i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (del(.marketing_banner_vo, .shipping.banner_above_recommend)) catch $original else . end`)",
+      "phase": "response",
+      "note": "仅订单营销横幅；不封 titan 长连接和日志域名，不动底栏",
+      "source": "plugins/Pinduoduo.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "SFExpress",
+      "hosts": [
+        "ccsp-egmas.sf-express.com"
+      ],
+      "pattern": "/^https:\\/\\/ccsp-egmas\\.sf-express\\.com\\/cx-app-base\\/base\\/app\\/ad\\//i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "仅广告接口；恢复积分商城及首页模块",
+      "source": "plugins/SFExpress.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Taopiaopiao",
+      "hosts": [
+        "acs.m.taobao.com"
+      ],
+      "pattern": "/^https:\\/\\/acs\\.m\\.taobao\\.com\\/gw\\/mtop\\.film\\.life\\.popup\\.get\\//i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "推广弹窗",
+      "source": "plugins/Taopiaopiao.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Taopiaopiao",
+      "hosts": [
+        "acs.m.taobao.com"
+      ],
+      "pattern": "/^https:\\/\\/acs\\.m\\.taobao\\.com\\/gw\\/mtop\\.film\\.mtopitemadvertiseapi\\.queryadvertise\\//i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "广告接口",
+      "source": "plugins/Taopiaopiao.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Taopiaopiao",
+      "hosts": [
+        "acs.m.taobao.com"
+      ],
+      "pattern": "/^https:\\/\\/acs\\.m\\.taobao\\.com\\/gw\\/mtop\\.film\\.mtopintegrationapi\\.homeconfig\\//i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (del(.data.returnValue.floatingBanner)) catch $original else . end`)",
+      "phase": "response",
+      "note": "只移除悬浮横幅；保留搜索和顶部标签",
+      "source": "plugins/Taopiaopiao.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Tieba",
+      "hosts": [
+        "tiebac.baidu.com"
+      ],
+      "pattern": "/^https?:\\/\\/tiebac\\.baidu\\.com\\/c\\/s\\/sync(?:\\?|$)/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (del(.advertisement_config, .ad_adsense, .ad_config, .ad_sdk_priority) | if (.wl_config|type)==\"object\" then .wl_config |= (if has(\"home_ad_num\") then .home_ad_num=0 else . end | if has(\"frs_ad_num\") then .frs_ad_num=0 else . end | if has(\"pb_comment_ad_num\") then .pb_comment_ad_num=0 else . end) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "仅广告配置；无 Protobuf 处理，不删视频帖和直播帖；覆盖有限",
+      "source": "plugins/Tieba.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "WeChat",
+      "hosts": [
+        "mp.weixin.qq.com"
+      ],
+      "pattern": "/^https:\\/\\/mp\\.weixin\\.qq\\.com\\/mp\\/getappmsgad(?:\\?|$)/i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "仅公众号广告接口；移除 90 多个小程序主机与 wxs.qq.com 泛拦截",
+      "source": "plugins/WeChat.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Weibo",
+      "hosts": [
+        "api.weibo.cn"
+      ],
+      "pattern": "/^https:\\/\\/api\\.weibo\\.cn\\/2\\/(?:statuses\\/(?:container_timeline(?:_hot|_topic|_topicpage|_unread)?|unread_hot_timeline|repost_timeline)|video\\/full_screen_stream|searchall|cardlist)(?:\\?|$)/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (def isad: if type != \"object\" then false else (.mblogtypename == \"广告\" or .readtimetype == \"adMblog\" or .promotion.recommend == \"广告\" or .content_auth_info.content_auth_title == \"广告\" or .ads_material_info.is_ads == true or .is_ad == 1) end; def clean: map(select((isad or (if type==\"object\" then (.mblog|isad) else false end))|not)); reduce [\"statuses\",\"cards\",\"items\",\"reposts\",\"hot_reposts\"][] as $key (.; if (.[$key]|type)==\"array\" then .[$key] |= clean else . end) | if (.cards|type)==\"array\" then (.cards[] | select(type==\"object\") | .card_group | select(type==\"array\")) |= clean else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "原 isAd 中仅保留明确广告标志；保留快转、非关注内容、热推、头像、菜单、连播和默认分组",
+      "source": "scripts/Weibo.js"
+    },
+    {
+      "mode": "inapp",
+      "app": "Weibo",
+      "hosts": [
+        "card.weibo.com",
+        "weibo.com"
+      ],
+      "pattern": "/^https:\\/\\/(?:card\\.weibo\\.com\\/article\\/m\\/aj|weibo\\.com\\/ttarticle\\/x\\/m\\/aj)\\/uvead(?:\\?|$)/i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "仅文章广告；不拦赞赏和投票",
+      "source": "plugins/Weibo.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Xiaohongshu",
+      "hosts": [
+        "edith.xiaohongshu.com",
+        "rec.xiaohongshu.com"
+      ],
+      "pattern": "/^https:\\/\\/(?:edith|rec)\\.xiaohongshu\\.com\\/api\\/sns\\/v6\\/homefeed(?:\\?|$)/",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.data|type)==\"array\" then .data |= map(select(if type==\"object\" then (has(\"ads_info\")|not) else true end)) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "只移除原广告标记 ads_info；保留直播、带货笔记、相关推荐",
+      "source": "scripts/Xiaohongshu.js"
+    },
+    {
+      "mode": "inapp",
+      "app": "Xiaohongshu",
+      "hosts": [
+        "edith.xiaohongshu.com"
+      ],
+      "pattern": "/^https:\\/\\/edith\\.xiaohongshu\\.com\\/api\\/sns\\/v4\\/note\\/videofeed(?:\\?|$)/",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.data|type)==\"array\" then .data |= map(select(if type==\"object\" then (has(\"ad\")|not) else true end)) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "只移除原 ad 标记；不修改视频保存或缓存",
+      "source": "scripts/Xiaohongshu.js"
+    },
+    {
+      "mode": "inapp",
+      "app": "Xiaohongshu",
+      "hosts": [
+        "www.xiaohongshu.com"
+      ],
+      "pattern": "/^https:\\/\\/www\\.xiaohongshu\\.com\\/api\\/sns\\/v1\\/ads\\/resource(?:\\?|$)/i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "独立广告资源接口",
+      "source": "plugins/Xiaohongshu.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Xiaoxiang",
+      "hosts": [
+        "mall.meituan.com"
+      ],
+      "pattern": "/^https:\\/\\/mall\\.meituan\\.com\\/api\\/c\\/homepage\\/bubble\\/operate\\/info/i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "只保留广告横幅和浮层；不拦订单/个人页推荐",
+      "source": "plugins/Xiaoxiang.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Xiaoxiang",
+      "hosts": [
+        "mall.meituan.com"
+      ],
+      "pattern": "/^https:\\/\\/mall\\.meituan\\.com\\/api\\/c\\/jigsaw\\/code\\/category-banner-\\d+\\//i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "只保留广告横幅和浮层；不拦订单/个人页推荐",
+      "source": "plugins/Xiaoxiang.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Xiaoxiang",
+      "hosts": [
+        "mall.meituan.com"
+      ],
+      "pattern": "/^https:\\/\\/mall\\.meituan\\.com\\/api\\/c\\/banner\\//i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "只保留广告横幅和浮层；不拦订单/个人页推荐",
+      "source": "plugins/Xiaoxiang.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Xiaoxiang",
+      "hosts": [
+        "portal-portm.meituan.com"
+      ],
+      "pattern": "/^https:\\/\\/portal-portm\\.meituan\\.com\\/horn_ios\\/mergeRequest/i",
+      "action": "response.json.delete(\"aidata_dd_resource_config.data.customer.feature_src_list.ad\")",
+      "phase": "response",
+      "note": "只删除广告配置字段",
+      "source": "plugins/Xiaoxiang.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Zhihu",
+      "hosts": [
+        "api.zhihu.com"
+      ],
+      "pattern": "/^https:\\/\\/api\\.zhihu\\.com\\/commercial_api\\/answer\\/[0-9]+\\/bottom-v2(?:\\?|$)/",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.adjson|type)==\"string\" then .adjson |= (. as $original | try (fromjson | .ads=[] | tojson) catch $original) elif (.adjson|type)==\"object\" then .adjson.ads=[] else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "保留嵌套 JSON 的字符串类型",
+      "source": "plugins/Zhihu.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Zhihu",
+      "hosts": [
+        "api.zhihu.com"
+      ],
+      "pattern": "/^https:\\/\\/api\\.zhihu\\.com\\/next-render(?:\\?|$)/",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.data|type)==\"array\" then .data |= map(select(if type==\"object\" then .type!=\"ad\" else true end)) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "只移除明确广告；保留回答与分页",
+      "source": "plugins/Zhihu.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Zhihu",
+      "hosts": [
+        "api.zhihu.com"
+      ],
+      "pattern": "/^https:\\/\\/api\\.zhihu\\.com\\/commercial_api\\/(?:app_float_layer|launch_v2)(?:\\?|$)/",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (reduce [\"app_float_video\",\"float_layer\",\"search_middle_page\"][] as $k (.; if has($k) then .[$k] |= (if type==\"string\" then . as $original | try (fromjson | .ads=[] | tojson) catch $original elif type==\"object\" then .ads=[] else . end) else . end)) catch $original else . end`)",
+      "phase": "response",
+      "note": "只处理应用内三个广告字段，不改 launch",
+      "source": "plugins/Zhihu.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Zhuanzhuan",
+      "hosts": [
+        "app.zhuanzhuan.com"
+      ],
+      "pattern": "/^https:\\/\\/app\\.zhuanzhuan\\.com\\/zzopen\\/popwindow\\/getallpopwin(?:\\?|$)/i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "只保留推广弹窗，不改商品推荐和我的页面",
+      "source": "plugins/Zhuanzhuan.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "Zhuanzhuan",
+      "hosts": [
+        "app.zhuanzhuan.com"
+      ],
+      "pattern": "/^https:\\/\\/app\\.zhuanzhuan\\.com\\/zzopen\\/zzbmlogic\\/queryFrontPageWindowInfo(?:\\?|$)/i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "只保留推广弹窗，不改商品推荐和我的页面",
+      "source": "plugins/Zhuanzhuan.lpx"
+    }
+  ],
+  "unsupported_splash": {
+    "BaiduNetdisk": "旧版 getconfig/getsyscfg 为通用配置，未证明是开屏专用",
+    "Cainiao": "现有 ads 接口无法可靠区分开屏与应用内",
+    "Dewu": "advertisement 为通用广告接口",
+    "Didi": "现有活动投放和通用域名拦截不能证明仅影响开屏",
+    "JD-Takeout": "现有规则主要是推荐/页面精简",
+    "LuckinCoffee": "adposNew 为通用广告位",
+    "NeteaseCloudMusic": "现有广告域名和 /ad/ 为共享广告资源",
+    "Pinduoduo": "旧版没有明确开屏专用接口，不保留 titan 等通用封锁",
+    "SFExpress": "/app/ad/ 为通用广告接口",
+    "Taopiaopiao": "queryadvertise 为通用广告接口",
+    "WeChat": "公众号与小程序广告，不能视为微信本体开屏",
+    "YouTube": "现有实现为视频/信息流去广告，非开屏"
+  },
+  "unsupported_inapp": {
+    "Taobao": "现有 JS 是开屏和通用活动模板，跨 App 的拦截不纳入淘宝内部去广告",
+    "JD-Takeout": "现有规则以推荐、钱包、页面入口删除为主，缺少明确广告判据",
+    "YouTube": "需要 Protobuf 脚本及视频域名解密；本轮以零 JS 原生版为基线，不纳入。需要时单独启用原 YouTube 插件并测量开销。"
+  },
+  "source_sha256": {
+    "plugins/12306.lpx": "3d51c94f59fc390a8b23374e1d61d66a49ef06c727e5215384df8ef572a1eeb2",
+    "plugins/Amap.lpx": "d70026c0e84bfb1e273564c8d5fb67f82c288bd6d8cecc1afbad8666b67665de",
+    "plugins/BaiduNetdisk.lpx": "4b0a77610d201ce1c2d4ef60858509e338b01b18007732b7b2ac039bb6c234db",
+    "plugins/Bilibili.lpx": "6e27b267f576bbe3cdc4e314c2a09fdd1f6b8734e7c045b367a76264fbda5eaa",
+    "plugins/Cainiao.lpx": "3a98dca2366009e8ccd87dbd931010aa09e05f189c6991acfd5cbcef2cb46146",
+    "plugins/Coolapk.lpx": "83d4ba6db4a4731beb7ff86d186680f5713ee81f13ea839020088431d0146f14",
+    "plugins/Dewu.lpx": "6729f36fedd02c82bdaddda305560a62466b7a21380487d8e7af152a3b90ed05",
+    "plugins/Didi.lpx": "2fcb6d4cc96d0f09de0c0388eaaeababdda97ab139c6a7af6fae69931eb125e4",
+    "plugins/Douban.lpx": "3f466bcff2301d30fc390c0ac84ec0742daa80ca844d53ff53da20b25c91199a",
+    "plugins/Goofish.lpx": "9b5e873950ed8d94f3f1aa80c28efec3de62b4eb8223e447dd44a2f4b868a91a",
+    "plugins/JD.lpx": "5d0336eee580eb0e12cfc44e02afeac4f6a3207f7b0a25135e4869989190d830",
+    "plugins/LuckinCoffee.lpx": "e464aede631e2f880e11efa50db7b75235f4b3ec364ff8fd6fce183d77772c01",
+    "plugins/McDonalds.lpx": "f9fe39af3e63d44de2cbcfeadbef3c4303235bf42b132feff4642b2b06323e83",
+    "plugins/NeteaseCloudMusic.lpx": "029f99778326c7ebc046b2210047d706e6d72112722e14935d317fc675d5a018",
+    "plugins/Pinduoduo.lpx": "185eeaac3edb8a382f5b19082a4500b6eb46d0b233591a083e5ad94802db816c",
+    "plugins/SFExpress.lpx": "2994d13f4e6b9445dcc60db18150905fa80a7463dae786e66923c1de5dfbf1ea",
+    "plugins/Taopiaopiao.lpx": "302a557bae1cb32ef0103bab19d95feac3c359518f4eada51514e2626e3ce58b",
+    "plugins/Tieba.lpx": "bf07a761dec68f854f089ff8a5108e636d85e44b343cde7d4e180683a99b194a",
+    "plugins/WeChat.lpx": "ac8d28c786ed6b27574782a6c4431c9be1c0f57e51e583383cb7b35462967773",
+    "plugins/Weibo.lpx": "e22bf3a5540495af97a5db12579307499637288bcd58591df751b964e2597067",
+    "plugins/Xiaohongshu.lpx": "36e910931da1c6091bcc8c1a4ccdc4b8d5dc1d5ab48a93e54cb124d5124807e7",
+    "plugins/Xiaoxiang.lpx": "ff7f05898105e348aebd48bc88fa4b07bd67ca527611f48307410ba19bfbbb29",
+    "plugins/Zhihu.lpx": "62ffad50e3af55e039ddc0f4bb987a9fab1986955be1be3c347ebf7bb2fc4d02",
+    "plugins/Zhuanzhuan.lpx": "2028c077cf6e03fde922191cee529c44f2f0461a647bcfc4b184d8f499c9afe0",
+    "scripts/Taobao.js": "bfc6b8b157f18896a0de0aea40e0f959397972c036e3b374ba6737e71d9184a6",
+    "scripts/Weibo.js": "6586579f5f4401a720fa3103bd5db70f20598377aa5f5ceedf6131445c8c8fba",
+    "scripts/Xiaohongshu.js": "5ad50fe21ff661147c7106d58958745d2df4afbd1d97724191364a89d12fe6cb"
+  }
+}

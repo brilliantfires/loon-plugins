@@ -1,0 +1,189 @@
+#!name=应用内广告
+#!desc=只保留广告过滤；默认全部关闭，请按需打开 App 开关。无 JS、无定时任务、无外部资源。关闭开关不移除静态 MitM 域名；不用时停用整个插件。
+#!author=原规则：可莉、RuCu6、fmz200、zmqcherish、Sliverkiss、kokoryh、Keywos、app2smile；精简整理：Codex
+#!homepage=https://github.com/brilliantfires/loon-plugins
+#!tag=去广告
+#!system=iOS,iPadOS
+#!system_version=15
+#!loon_version=3.5.1(998)
+#!date=2026-11-05
+
+[Argument]
+app_12306 = switch,false,tag=12306
+app_Amap = switch,false,tag=高德地图
+app_BaiduNetdisk = switch,false,tag=百度网盘
+app_Bilibili = switch,false,tag=哔哩哔哩
+app_Cainiao = switch,false,tag=菜鸟
+app_Coolapk = switch,false,tag=酷安
+app_Dewu = switch,false,tag=得物
+app_Didi = switch,false,tag=滴滴
+app_Douban = switch,false,tag=豆瓣,desc=沿用原插件限制仅适用兼容的签名版豆瓣
+app_Goofish = switch,false,tag=闲鱼
+app_JD = switch,false,tag=京东
+app_LuckinCoffee = switch,false,tag=瑞幸咖啡
+app_McDonalds = switch,false,tag=麦当劳
+app_NeteaseCloudMusic = switch,false,tag=网易云音乐
+app_Pinduoduo = switch,false,tag=拼多多
+app_SFExpress = switch,false,tag=顺丰速运
+app_Taopiaopiao = switch,false,tag=淘票票
+app_Tieba = switch,false,tag=百度贴吧
+app_WeChat = switch,false,tag=微信
+app_Weibo = switch,false,tag=微博
+app_Xiaohongshu = switch,false,tag=小红书
+app_Xiaoxiang = switch,false,tag=小象超市
+app_Zhihu = switch,false,tag=知乎
+app_Zhuanzhuan = switch,false,tag=转转
+
+[Rewrite]
+
+# 12306
+# 仅 activityBanner；不拦整个首页、会员问答或支付完成入口
+request if ${app_12306} == true && ${url} ~= /^https:\/\/mobile\.12306\.cn\/otsmobile\/app\/mgs\// && ${request.header['operation-type']} == "com.cars.otsmobile.integration.activityBanner" then reject_dict(200)
+
+# 高德地图
+# 只保留原配置中的明确广告字段；删除远程 jq 依赖
+response if ${app_Amap} == true && ${url} ~= /^https:\/\/m5\.amap\.com\/ws\/shield\/frogserver\/aocs\/updatable\/1(?:\?|$)/i then response.json.jq(`if type=="object" then . as $original | try (del(.data.adStatementConfig, .data.adCustomerRetainArchitecture, .data.adImEntryConfig, .data.adVenueConfig, .data.EndNaviC3AdCard)) catch $original else . end`)
+# 广告推广资源接口
+request if ${app_Amap} == true && ${url} ~= /^https:\/\/m5-zb\.amap\.com\/ws\/promotion-web\/resource(\/home)?\?/i then reject_dict(200)
+
+# 百度网盘
+# 仅广告接口；恢复 getconfig/getsyscfg 和页面入口
+request if ${app_BaiduNetdisk} == true && ${url} ~= /^https:\/\/pan\.baidu\.com\/rest\/\d\.\d\/pcs\/adv\?/i then reject_dict(200)
+
+# 哔哩哔哩
+# 保留原生广告与直播购物浮层过滤；无 Protobuf 脚本
+request if ${app_Bilibili} == true && ${url} ~= /^https:\/\/line3-h5-mobile-api\.biligame\.com\/game\/live\/large_card_material\?/i then reject_dict(200)
+# 保留原生广告与直播购物浮层过滤；无 Protobuf 脚本
+request if ${app_Bilibili} == true && ${url} ~= /^https:\/\/api\.live\.bilibili\.com\/xlive\/e-commerce-interface\/v1\/ecommerce-user\/get_shopping_info\?/i then reject_dict(200)
+# 保留原生广告与直播购物浮层过滤；无 Protobuf 脚本
+response if ${app_Bilibili} == true && ${url} ~= /^https:\/\/api\.live\.bilibili\.com\/xlive\/app-interface\/v2\/index\/feed\?/i then response.json.jq(`if type=="object" then . as $original | try (if (.data.card_list | type) == "array" then .data.card_list |= map(select(.card_type != "banner_v2" and .card_type != "activity_card_v1")) else . end) catch $original else . end`)
+# 保留原生广告与直播购物浮层过滤；无 Protobuf 脚本
+response if ${app_Bilibili} == true && ${url} ~= /^https:\/\/api\.live\.bilibili\.com\/xlive\/app-room\/v1\/index\/getInfoBy(Room|User)\?/i then response.json.jq(`if type=="object" then . as $original | try (del(.data.shopping_info, .data.activity_banner_info)) catch $original else . end`)
+# 只按明确 ad_info/广告卡类型过滤
+response if ${app_Bilibili} == true && ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index\?/i then response.json.jq(`if type=="object" then . as $original | try (if (.data.items | type) == "array" then .data.items |= map(select(.ad_info == null)) else . end) catch $original else . end`)
+# 只按明确 ad_info/广告卡类型过滤
+response if ${app_Bilibili} == true && ${url} ~= /^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index\/story\?/i then response.json.jq(`if type=="object" then . as $original | try (if (.data.items | type) == "array" then .data.items |= map(select(.ad_info == null and (.card_goto | IN("vertical_ad_av", "vertical_ad_live", "vertical_ad_picture") | not))) else . end) catch $original else . end`)
+# 保留原生广告与直播购物浮层过滤；无 Protobuf 脚本
+response if ${app_Bilibili} == true && ${url} ~= /^https:\/\/api\.bilibili\.com\/x\/vip\/ads\/materials\?/i then response.body.mock("json", `{"code":-404,"message":"-404","ttl":1,"data":null}`, 200)
+# 保留原生广告与直播购物浮层过滤；无 Protobuf 脚本
+response if ${app_Bilibili} == true && ${url} ~= /^https:\/\/api\.bilibili\.com\/pgc\/activity\/deliver\/material\/receive\?/i then response.body.mock("json", `{"code":0,"data":{"closeType":"close_win","container":[],"showTime":""},"message":"success"}`, 200)
+
+# 菜鸟
+# 仅独立广告接口；不改每日现金任务、会员或首页推荐
+request if ${app_Cainiao} == true && ${url} ~= /^https:\/\/netflow-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\.index/i then reject(404)
+# 仅独立广告接口；不改每日现金任务、会员或首页推荐
+request if ${app_Cainiao} == true && ${url} ~= /^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.adkeyword\.get\.cn/i then reject(404)
+# 仅独立广告接口；不改每日现金任务、会员或首页推荐
+request if ${app_Cainiao} == true && ${url} ~= /^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\.m?show/i then reject(404)
+
+# 酷安
+# 只移除 sponsorCard，保留热搜、普通图片卡和推荐
+response if ${app_Coolapk} == true && ${url} ~= /^https:\/\/api\.coolapk\.com\/v6\/(?:main\/(?:dataList|indexV8)|page\/dataList)(?:\?|$)/i then response.json.jq(`if type=="object" then . as $original | try (if (.data|type)=="array" then .data |= map(select(if type=="object" then .entityTemplate != "sponsorCard" else true end)) else . end) catch $original else . end`)
+# 仅详情赞助卡；不筛评论 id 或删正常商品内容
+response if ${app_Coolapk} == true && ${url} ~= /^https:\/\/api\.coolapk\.com\/v6\/feed\/detail(?:\?|$)/i then response.json.jq(`if type=="object" then . as $original | try (if (.data|type)=="object" and (.data|has("detailSponsorCard")) then .data.detailSponsorCard=[] else . end) catch $original else . end`)
+
+# 得物
+# 广告接口可能兼含开屏；不虚称为独立开屏接口
+request if ${app_Dewu} == true && ${url} ~= /^https:\/\/app\.dewu\.com\/api\/v1\/app\/advertisement\//i then reject_dict(200)
+
+# 滴滴
+# 活动广告接口；不改证书校验、网络连通性或行程布局
+request if ${app_Didi} == true && ${url} ~= /^https:\/\/res\.xiaojukeji\.com\/resapi\/activity\/mget\?/i then reject_dict(200)
+
+# 豆瓣
+# 仅电影广告与首页广告横幅；沿用原签名版限制
+request if ${app_Douban} == true && ${url} ~= /^https:\/\/frodo\.douban\.com\/api\/v\d\/movie\/ad/i then reject_dict(200)
+# 仅电影广告与首页广告横幅；沿用原签名版限制
+request if ${app_Douban} == true && ${url} ~= /^https:\/\/frodo\.douban\.com\/api\/v\d\/home_banner/i then reject_dict(200)
+
+# 闲鱼
+# 只移除 mamaAD；保留正常推荐和首页其他卡片
+response if ${app_Goofish} == true && ${url} ~= /^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idlehome\.home\.nextfresh\//i then response.json.jq(`if type=="object" then . as $original | try (if (.data.sections|type)=="array" then .data.sections |= map(select(if type=="object" then .data.clickParam.args.cardType != "mamaAD" else true end)) else . end) catch $original else . end`)
+# 只移除 mamaAD；保留正常推荐和首页其他卡片
+response if ${app_Goofish} == true && ${url} ~= /^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idlehome\.home\.newitem\.page\//i then response.json.jq(`if type=="object" then . as $original | try (if (.data.sections|type)=="array" then .data.sections |= map(select(if type=="object" then .data.clickParam.args.cardType != "mamaAD" else true end)) else . end) catch $original else . end`)
+# 只移除 cardEnum=ads
+response if ${app_Goofish} == true && ${url} ~= /^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idle\.local\.home\//i then response.json.jq(`if type=="object" then . as $original | try (if (.data.sections|type)=="array" then .data.sections |= map(select(if type=="object" then .template.cardEnum != "ads" else true end)) else . end) catch $original else . end`)
+# 只移除搜索明确广告，保留搜索前缀栏
+response if ${app_Goofish} == true && ${url} ~= /^https:\/\/g-acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idlemtopsearch\.search\//i then response.json.jq(`if type=="object" then . as $original | try (if (.data.resultList|type)=="array" then .data.resultList |= map(select(if type=="object" then .data.item.main.exContent.dislikeFeedback.clickParam.args.bizType != "ad" else true end)) else . end) catch $original else . end`)
+
+# 京东
+# 仅物流页面横幅；不拦推荐、不改 HTTPDNS
+response if ${app_JD} == true && ${url} ~= /^https:\/\/api\.m\.jd\.com\/client\.action\?(?:[^#]*&)?functionId=(?:deliverLayer|orderTrackBusiness)(?:&|$)/i then response.json.jq(`if type=="object" then . as $original | try (del(.bannerInfo) | if (.floors|type)=="array" then .floors |= map(select(.mId != "banner" and .mId != "jdDeliveryBanner")) else . end) catch $original else . end`)
+
+# 瑞幸咖啡
+# 仅广告位接口；恢复公共模块、礼品卡与成长日历
+request if ${app_LuckinCoffee} == true && ${url} ~= /^https:\/\/capi\.lkcoffee\.com\/resource\/m\/sys\/app\/adposNew/i then reject(404)
+
+# 麦当劳
+# 仅推广弹窗
+response if ${app_McDonalds} == true && ${url} ~= /^https:\/\/api\.mcd\.cn\/bff\/portal\/richpop\/v2(?:\?|$)/i then response.json.jq(`if type=="object" then . as $original | try (del(.data.pop)) catch $original else . end`)
+
+# 网易云音乐
+# 仅独立广告响应；移除 AES/gzip 脚本及页面白名单
+response if ${app_NeteaseCloudMusic} == true && ${url} ~= /^https?:\/\/interface\d?\.music\.163\.com\/e?api\/(ocpc\/)?ad\//i then response.body.mock("text", "")
+
+# 拼多多
+# 仅订单营销横幅；不封 titan 长连接和日志域名，不动底栏
+response if ${app_Pinduoduo} == true && ${url} ~= /^https:\/\/api\.pinduoduo\.com\/order\//i then response.json.jq(`if type=="object" then . as $original | try (del(.marketing_banner_vo, .shipping.banner_above_recommend)) catch $original else . end`)
+
+# 顺丰速运
+# 仅广告接口；恢复积分商城及首页模块
+request if ${app_SFExpress} == true && ${url} ~= /^https:\/\/ccsp-egmas\.sf-express\.com\/cx-app-base\/base\/app\/ad\//i then reject_dict(200)
+
+# 淘票票
+# 推广弹窗
+request if ${app_Taopiaopiao} == true && ${url} ~= /^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.life\.popup\.get\//i then reject_dict(200)
+# 广告接口
+request if ${app_Taopiaopiao} == true && ${url} ~= /^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.mtopitemadvertiseapi\.queryadvertise\//i then reject_dict(200)
+# 只移除悬浮横幅；保留搜索和顶部标签
+response if ${app_Taopiaopiao} == true && ${url} ~= /^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.mtopintegrationapi\.homeconfig\//i then response.json.jq(`if type=="object" then . as $original | try (del(.data.returnValue.floatingBanner)) catch $original else . end`)
+
+# 百度贴吧
+# 仅广告配置；无 Protobuf 处理，不删视频帖和直播帖；覆盖有限
+response if ${app_Tieba} == true && ${url} ~= /^https?:\/\/tiebac\.baidu\.com\/c\/s\/sync(?:\?|$)/i then response.json.jq(`if type=="object" then . as $original | try (del(.advertisement_config, .ad_adsense, .ad_config, .ad_sdk_priority) | if (.wl_config|type)=="object" then .wl_config |= (if has("home_ad_num") then .home_ad_num=0 else . end | if has("frs_ad_num") then .frs_ad_num=0 else . end | if has("pb_comment_ad_num") then .pb_comment_ad_num=0 else . end) else . end) catch $original else . end`)
+
+# 微信
+# 仅公众号广告接口；移除 90 多个小程序主机与 wxs.qq.com 泛拦截
+request if ${app_WeChat} == true && ${url} ~= /^https:\/\/mp\.weixin\.qq\.com\/mp\/getappmsgad(?:\?|$)/i then reject_dict(200)
+
+# 微博
+# 原 isAd 中仅保留明确广告标志；保留快转、非关注内容、热推、头像、菜单、连播和默认分组
+response if ${app_Weibo} == true && ${url} ~= /^https:\/\/api\.weibo\.cn\/2\/(?:statuses\/(?:container_timeline(?:_hot|_topic|_topicpage|_unread)?|unread_hot_timeline|repost_timeline)|video\/full_screen_stream|searchall|cardlist)(?:\?|$)/i then response.json.jq(`if type=="object" then . as $original | try (def isad: if type != "object" then false else (.mblogtypename == "广告" or .readtimetype == "adMblog" or .promotion.recommend == "广告" or .content_auth_info.content_auth_title == "广告" or .ads_material_info.is_ads == true or .is_ad == 1) end; def clean: map(select((isad or (if type=="object" then (.mblog|isad) else false end))|not)); reduce ["statuses","cards","items","reposts","hot_reposts"][] as $key (.; if (.[$key]|type)=="array" then .[$key] |= clean else . end) | if (.cards|type)=="array" then (.cards[] | select(type=="object") | .card_group | select(type=="array")) |= clean else . end) catch $original else . end`)
+# 仅文章广告；不拦赞赏和投票
+request if ${app_Weibo} == true && ${url} ~= /^https:\/\/(?:card\.weibo\.com\/article\/m\/aj|weibo\.com\/ttarticle\/x\/m\/aj)\/uvead(?:\?|$)/i then reject_dict(200)
+
+# 小红书
+# 只移除原广告标记 ads_info；保留直播、带货笔记、相关推荐
+response if ${app_Xiaohongshu} == true && ${url} ~= /^https:\/\/(?:edith|rec)\.xiaohongshu\.com\/api\/sns\/v6\/homefeed(?:\?|$)/ then response.json.jq(`if type=="object" then . as $original | try (if (.data|type)=="array" then .data |= map(select(if type=="object" then (has("ads_info")|not) else true end)) else . end) catch $original else . end`)
+# 只移除原 ad 标记；不修改视频保存或缓存
+response if ${app_Xiaohongshu} == true && ${url} ~= /^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v4\/note\/videofeed(?:\?|$)/ then response.json.jq(`if type=="object" then . as $original | try (if (.data|type)=="array" then .data |= map(select(if type=="object" then (has("ad")|not) else true end)) else . end) catch $original else . end`)
+# 独立广告资源接口
+request if ${app_Xiaohongshu} == true && ${url} ~= /^https:\/\/www\.xiaohongshu\.com\/api\/sns\/v1\/ads\/resource(?:\?|$)/i then reject_dict(200)
+
+# 小象超市
+# 只保留广告横幅和浮层；不拦订单/个人页推荐
+request if ${app_Xiaoxiang} == true && ${url} ~= /^https:\/\/mall\.meituan\.com\/api\/c\/homepage\/bubble\/operate\/info/i then reject_dict(200)
+# 只保留广告横幅和浮层；不拦订单/个人页推荐
+request if ${app_Xiaoxiang} == true && ${url} ~= /^https:\/\/mall\.meituan\.com\/api\/c\/jigsaw\/code\/category-banner-\d+\//i then reject_dict(200)
+# 只保留广告横幅和浮层；不拦订单/个人页推荐
+request if ${app_Xiaoxiang} == true && ${url} ~= /^https:\/\/mall\.meituan\.com\/api\/c\/banner\//i then reject_dict(200)
+# 只删除广告配置字段
+response if ${app_Xiaoxiang} == true && ${url} ~= /^https:\/\/portal-portm\.meituan\.com\/horn_ios\/mergeRequest/i then response.json.delete("aidata_dd_resource_config.data.customer.feature_src_list.ad")
+
+# 知乎
+# 保留嵌套 JSON 的字符串类型
+response if ${app_Zhihu} == true && ${url} ~= /^https:\/\/api\.zhihu\.com\/commercial_api\/answer\/[0-9]+\/bottom-v2(?:\?|$)/ then response.json.jq(`if type=="object" then . as $original | try (if (.adjson|type)=="string" then .adjson |= (. as $original | try (fromjson | .ads=[] | tojson) catch $original) elif (.adjson|type)=="object" then .adjson.ads=[] else . end) catch $original else . end`)
+# 只移除明确广告；保留回答与分页
+response if ${app_Zhihu} == true && ${url} ~= /^https:\/\/api\.zhihu\.com\/next-render(?:\?|$)/ then response.json.jq(`if type=="object" then . as $original | try (if (.data|type)=="array" then .data |= map(select(if type=="object" then .type!="ad" else true end)) else . end) catch $original else . end`)
+# 只处理应用内三个广告字段，不改 launch
+response if ${app_Zhihu} == true && ${url} ~= /^https:\/\/api\.zhihu\.com\/commercial_api\/(?:app_float_layer|launch_v2)(?:\?|$)/ then response.json.jq(`if type=="object" then . as $original | try (reduce ["app_float_video","float_layer","search_middle_page"][] as $k (.; if has($k) then .[$k] |= (if type=="string" then . as $original | try (fromjson | .ads=[] | tojson) catch $original elif type=="object" then .ads=[] else . end) else . end)) catch $original else . end`)
+
+# 转转
+# 只保留推广弹窗，不改商品推荐和我的页面
+request if ${app_Zhuanzhuan} == true && ${url} ~= /^https:\/\/app\.zhuanzhuan\.com\/zzopen\/popwindow\/getallpopwin(?:\?|$)/i then reject_dict(200)
+# 只保留推广弹窗，不改商品推荐和我的页面
+request if ${app_Zhuanzhuan} == true && ${url} ~= /^https:\/\/app\.zhuanzhuan\.com\/zzopen\/zzbmlogic\/queryFrontPageWindowInfo(?:\?|$)/i then reject_dict(200)
+
+[MitM]
+# 静态名单。开关仅关闭复写，不动态撤销 TLS 解密。
+hostname = acs.m.goofish.com, acs.m.taobao.com, api.bilibili.com, api.coolapk.com, api.live.bilibili.com, api.m.jd.com, api.mcd.cn, api.pinduoduo.com, api.weibo.cn, api.zhihu.com, app.bilibili.com, app.dewu.com, app.zhuanzhuan.com, capi.lkcoffee.com, card.weibo.com, ccsp-egmas.sf-express.com, cn-acs.m.cainiao.com, edith.xiaohongshu.com, frodo.douban.com, g-acs.m.goofish.com, interface*.music.163.com, line3-h5-mobile-api.biligame.com, m5-zb.amap.com, m5.amap.com, mall.meituan.com, mobile.12306.cn, mp.weixin.qq.com, netflow-mtop.cainiao.com, pan.baidu.com, portal-portm.meituan.com, rec.xiaohongshu.com, res.xiaojukeji.com, tiebac.baidu.com, weibo.com, www.xiaohongshu.com

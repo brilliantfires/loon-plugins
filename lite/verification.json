@@ -1,0 +1,16 @@
+{
+  "offline_assertions": 1073,
+  "rule_count": 71,
+  "jq_count": 35,
+  "status": "passed",
+  "private_capture_responses": {
+    "Coolapk_init": 1,
+    "McDonalds_splash": 2
+  },
+  "limitations": [
+    "Not a Loon parser test",
+    "Not a real app network test",
+    "No measured energy savings",
+    "Native regex replacement framing tested with Python; Loon runtime still requires device validation"
+  ]
+}
