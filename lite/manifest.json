@@ -1024,6 +1024,54 @@
       "phase": "response",
       "note": "商业化横幅全命名空间；banner 为嵌套 JSON 字符串，清空 ads 后保持字符串格式",
       "source": "lite/InApp-Ads.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "菜鸟",
+      "hosts": [
+        "guide-acs.m.taobao.com"
+      ],
+      "pattern": "/^https:\\/\\/guide-acs\\.m\\.taobao\\.com\\/gw\\/mtop\\.cainiao\\.adx\\.flyad\\.getad\\//",
+      "action": "response.json.jq(清空 .data.result.flyAdList)",
+      "phase": "response",
+      "note": "首页 flyAd 阿里妈妈 CPC 商品广告；保留 mtop 信封避免重试",
+      "source": "lite/InApp-Ads.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "菜鸟",
+      "hosts": [
+        "netflow-mtop.cainiao.com"
+      ],
+      "pattern": "/^https:\\/\\/netflow-mtop\\.cainiao\\.com\\/gw\\/mtop\\.cainiao\\.guoguo\\.nbnetflow\\.ads\\.(?:batch\\.show|mshow)\\//",
+      "action": "response.json.jq(每个 boothId 的广告数组置空)",
+      "phase": "response",
+      "note": "包裹列表/物流详情广告位，data 为 boothId → 广告数组",
+      "source": "lite/InApp-Ads.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "菜鸟",
+      "hosts": [
+        "netflow-mtop.cainiao.com"
+      ],
+      "pattern": "/^https:\\/\\/netflow-mtop\\.cainiao\\.com\\/gw\\/mtop\\.cainiao\\.guoguo\\.nbnetflow\\.ads\\.(?:show(?:\\.login)?|index)\\//",
+      "action": "response.json.jq(清空 .data.result)",
+      "phase": "response",
+      "note": "单条广告接口，data.result 为数组",
+      "source": "lite/InApp-Ads.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "菜鸟",
+      "hosts": [
+        "cn-acs.m.cainiao.com"
+      ],
+      "pattern": "/^https:\\/\\/cn-acs\\.m\\.cainiao\\.com\\/gw\\/mtop\\.cainiao\\.(?:adkeyword\\.get|guoguo\\.nbnetflow\\.ads\\.)/i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "旧版客户端仍走该主机；adkeyword 与 nbnetflow 广告接口统一返回空",
+      "source": "lite/InApp-Ads.lpx"
     }
   ],
   "unsupported_splash": {

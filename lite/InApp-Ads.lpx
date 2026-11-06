@@ -69,12 +69,14 @@ response if ${app_Bilibili} == true && ${url} ~= /^https:\/\/api\.bilibili\.com\
 response if ${app_Bilibili} == true && ${url} ~= /^https:\/\/api\.bilibili\.com\/pgc\/activity\/deliver\/material\/receive\?/i then response.body.mock("json", `{"code":0,"data":{"closeType":"close_win","container":[],"showTime":""},"message":"success"}`, 200)
 
 # 菜鸟
-# 仅独立广告接口；不改每日现金任务、会员或首页推荐
-request if ${app_Cainiao} == true && ${url} ~= /^https:\/\/netflow-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\.index/i then reject(404)
-# 仅独立广告接口；不改每日现金任务、会员或首页推荐
-request if ${app_Cainiao} == true && ${url} ~= /^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.adkeyword\.get\.cn/i then reject(404)
-# 仅独立广告接口；不改每日现金任务、会员或首页推荐
-request if ${app_Cainiao} == true && ${url} ~= /^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\.m?show/i then reject(404)
+# 首页 flyAd（阿里妈妈 CPC 商品广告）：清空 flyAdList，保留 mtop 信封避免客户端重试
+response if ${app_Cainiao} == true && ${url} ~= /^https:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.cainiao\.adx\.flyad\.getad\// then response.json.jq(`if type=="object" then . as $o | try (if (.data.result.flyAdList|type)=="array" then .data.result.flyAdList=[] else . end) catch $o else . end`)
+# 包裹列表/物流详情广告位：data 为 boothId → 广告数组
+response if ${app_Cainiao} == true && ${url} ~= /^https:\/\/netflow-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\.(?:batch\.show|mshow)\// then response.json.jq(`if type=="object" then . as $o | try (if (.data|type)=="object" then .data |= with_entries(if (.value|type)=="array" then .value=[] else . end) else . end) catch $o else . end`)
+# 单条广告接口：data.result 为数组
+response if ${app_Cainiao} == true && ${url} ~= /^https:\/\/netflow-mtop\.cainiao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\.(?:show(?:\.login)?|index)\// then response.json.jq(`if type=="object" then . as $o | try (if (.data.result|type)=="array" then .data.result=[] else . end) catch $o else . end`)
+# 旧版客户端仍走 cn-acs 主机：整段广告接口直接返回空
+request if ${app_Cainiao} == true && ${url} ~= /^https:\/\/cn-acs\.m\.cainiao\.com\/gw\/mtop\.cainiao\.(?:adkeyword\.get|guoguo\.nbnetflow\.ads\.)/i then reject_dict(200)
 
 # 酷安
 # 只移除 sponsorCard，保留热搜、普通图片卡和推荐
@@ -189,4 +191,4 @@ request if ${app_Zhuanzhuan} == true && ${url} ~= /^https:\/\/app\.zhuanzhuan\.c
 
 [MitM]
 # 静态名单。开关仅关闭复写，不动态撤销 TLS 解密。
-hostname = acs.m.goofish.com, acs.m.taobao.com, api.bilibili.com, api.coolapk.com, api.live.bilibili.com, api.m.jd.com, api.mcd.cn, api.pinduoduo.com, api.weibo.cn, api.zhihu.com, app.bilibili.com, app.dewu.com, app.zhuanzhuan.com, capi.lkcoffee.com, card.weibo.com, ccsp-egmas.sf-express.com, cn-acs.m.cainiao.com, edith.xiaohongshu.com, frodo.douban.com, g-acs.m.goofish.com, interface*.music.163.com, line3-h5-mobile-api.biligame.com, m5-zb.amap.com, m5.amap.com, mall.meituan.com, mobile.12306.cn, mp.weixin.qq.com, netflow-mtop.cainiao.com, pan.baidu.com, portal-portm.meituan.com, rec.xiaohongshu.com, res.xiaojukeji.com, tiebac.baidu.com, weibo.com, www.xiaohongshu.com
+hostname = acs.m.goofish.com, acs.m.taobao.com, api.bilibili.com, api.coolapk.com, api.live.bilibili.com, api.m.jd.com, api.mcd.cn, api.pinduoduo.com, api.weibo.cn, api.zhihu.com, app.bilibili.com, app.dewu.com, app.zhuanzhuan.com, capi.lkcoffee.com, card.weibo.com, ccsp-egmas.sf-express.com, cn-acs.m.cainiao.com, edith.xiaohongshu.com, frodo.douban.com, g-acs.m.goofish.com, interface*.music.163.com, line3-h5-mobile-api.biligame.com, m5-zb.amap.com, m5.amap.com, mall.meituan.com, mobile.12306.cn, mp.weixin.qq.com, netflow-mtop.cainiao.com, pan.baidu.com, portal-portm.meituan.com, rec.xiaohongshu.com, res.xiaojukeji.com, tiebac.baidu.com, weibo.com, www.xiaohongshu.com, guide-acs.m.taobao.com
