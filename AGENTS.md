@@ -43,22 +43,19 @@ AGENTS.md      本文件
    ```
 5. **本地校验**（见第五节的脚本），确认开关无未定义、无重复规则、MitM 覆盖所有 URL 主机。
 6. **提交并推送**到 `main`。
-7. **轮询 GitHub Pages 直到确认生效**（见第四节），并把本地与线上 SHA-256 对比一致。
+7. **确认线上状态**。看一次即可，不要轮询（见第十三节）；线上还是旧版本属正常，不代表失败。
 
-## 四、GitHub Pages 有延迟，必须验证
+## 四、GitHub Pages 有延迟，但只需要看一次
 
-push 成功 ≠ 线上生效。实测延迟 **1～3 分钟**，且 `raw.githubusercontent.com` 也可能返回旧内容。不要凭 push 输出就宣布“已上线”。
+push 成功 ≠ 立刻生效，实测延迟 **1～3 分钟**，`raw.githubusercontent.com` 也可能返回旧内容。所以不要凭 push 输出就说“已上线”。但也**不要为了等构建反复轮询**——看一次，旧版本就如实说“已推送，构建中”。
 
-轮询并比对哈希：
+单次检查：
 
 ```bash
-cd lite && LOCAL=$(shasum -a 256 InApp-Ads.lpx | awk '{print $1}')
-for i in $(seq 1 8); do
-  sleep 20
-  curl -sS -o /tmp/check.lpx "https://brilliantfires.github.io/loon-plugins/lite/InApp-Ads.lpx?cb=$RANDOM"
-  [ "$(shasum -a 256 /tmp/check.lpx | awk '{print $1}')" = "$LOCAL" ] && { echo "已生效"; break; }
-  echo "尝试 $i：仍是旧版本"
-done
+cd lite && curl -sS -o /tmp/check.lpx \
+  "https://brilliantfires.github.io/loon-plugins/lite/InApp-Ads.lpx?cb=$RANDOM"
+grep -m1 '^#!date' /tmp/check.lpx
+shasum -a 256 /tmp/check.lpx InApp-Ads.lpx | cut -c1-12
 ```
 
 要点：
@@ -171,3 +168,29 @@ else . end
 ## 十二、验证边界
 
 仓库文档里的“已验证”仅指离线校验与已保存响应的回放，**没有** iPhone 上的命中率、CPU 或能耗实测。写结论时不要夸大；基于推断的规则（例如按广告上报域名反推开屏链路）要在 `AUDIT.md` 里标明是推断，并写清需要什么证据才能确认。
+
+## 十三、验证的分寸
+
+本地验证只能证明**规则没写错**，不能证明“手机上广告没了”。把两者混为一谈，就会浪费大量时间。
+
+**确实有用的部分**（都是真实拦下的错误）：
+
+- 用抓包里的真实响应跑 jq，发现 `try EXP catch .` 会把错误信息写进 body；
+- 用抓包里的真实 URL 跑正则，发现闲鱼 `idlecommerce.splash.ads` 是点号不是斜杠；
+- 用抓包比对接口主机，发现菜鸟广告接口已从 `cn-acs.m.cainiao.com` 迁到 `netflow-mtop.cainiao.com`。
+
+**没用的部分（不要做）**：
+
+- 反复 `sleep` + `curl` + 哈希对比的轮询循环。构建要 1～3 分钟，等它没有意义；看一次，回答“已推送”即可。
+- 为改日期、改注释、改文档、改文案跑任何测试。
+- 把“本地通过”写成“已生效”。没有看到线上内容，就只能说“已推送”。
+- 拿本地回放结果反驳用户真机上的反馈。真机为准。
+
+**改动类型与验证要求**：
+
+| 改动 | 要求 |
+| --- | --- |
+| 正则 / jq / 接口路径 | 用对应抓包样本跑一次，只为抓写法错误，不做第二轮 |
+| `#!date`、注释、文档、README | 无 |
+| 推送之后 | 最多一次 `curl` 看一眼，或直接交给用户手机上验证 |
+| 不确定是否覆盖真机场景 | 说明边界，让用户实测，不要自己编造结论 |
