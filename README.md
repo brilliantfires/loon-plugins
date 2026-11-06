@@ -13,7 +13,7 @@
 
 请先停用对应旧插件，避免叠加。精简版缩小了广告覆盖范围，尚未做手机能耗实测；App 开关不动态撤销静态 MitM 域名。不使用内部版时请停用整个插件。
 
-[安装与覆盖说明](lite/README.md) · [逐 App 审计](lite/AUDIT.md)
+[安装与覆盖说明](lite/README.md) · [逐 App 审计](lite/AUDIT.md) · [维护与改动流程](AGENTS.md)
 
 ## 导入
 
