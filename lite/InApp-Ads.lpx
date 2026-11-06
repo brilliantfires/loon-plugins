@@ -6,7 +6,7 @@
 #!system=iOS,iPadOS
 #!system_version=15
 #!loon_version=3.5.1(998)
-#!date=2026-11-06
+#!date=2026-11-06 21:45
 
 [Argument]
 app_12306 = switch,false,tag=12306
