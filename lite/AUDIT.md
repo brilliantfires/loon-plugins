@@ -56,6 +56,8 @@
 
 但这些开关不会修改文件中的静态 `hostname`。长期不用某个 App 时，可在插件中手工删除它的规则与主机；整个内部版不用时直接停用。其他插件及主配置若也声明同一主机，仍可能继续解密。
 
+开屏版另有 4 条`[Rule]`静态域名规则，拦截阿里妈妈链路：`DOMAIN-SUFFIX,tanx.com`（曝光、竞价）、`DOMAIN-SUFFIX,atanx.alicdn.com`（广告素材 CDN）、`DOMAIN,adashx.m.taobao.com` 与 `DOMAIN,h-adashx.ut.taobao.com`（效果回传）。它们不挂在任何 App 开关下、也不需要 MitM，代价是同样作用于淘宝、闲鱼、优酷等阿里系 App。依据是一次闲鱼冷启动抓包中出现 `bdlog.tanx.com/imp?...pid=mm_10982364_2444700315_111662350100` 曝光上报、`ipm.atm.youku.com` 广告播放监测与 `sealine.youku.com/sdkconfig_60.xml`；该抓包录制起点晚于开屏素材请求，因此**没有直接证据证明开屏素材来自这些域名**，这组规则属于基于曝光链路的推断，需要真机对照。
+
 ## 验证边界
 
 离线验证覆盖正则编译、开关保护、JQ 异常数据回退、幂等性、正常内容保留、共享接口字段分离，以及已保存的酷安/麦当劳响应。详见 `verification.json`。

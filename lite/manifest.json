@@ -964,6 +964,54 @@
       "phase": "request",
       "note": "只保留推广弹窗，不改商品推荐和我的页面",
       "source": "plugins/Zhuanzhuan.lpx"
+    },
+    {
+      "mode": "rule",
+      "app": "全局",
+      "hosts": [
+        "tanx.com"
+      ],
+      "pattern": "DOMAIN-SUFFIX,tanx.com",
+      "action": "REJECT",
+      "phase": "dns",
+      "note": "阿里妈妈曝光/竞价链路；静态规则，不受 App 开关控制",
+      "source": "lite/Splash-Only.lpx"
+    },
+    {
+      "mode": "rule",
+      "app": "全局",
+      "hosts": [
+        "atanx.alicdn.com"
+      ],
+      "pattern": "DOMAIN-SUFFIX,atanx.alicdn.com",
+      "action": "REJECT",
+      "phase": "dns",
+      "note": "阿里妈妈广告素材 CDN；如出现图片异常可单独删除",
+      "source": "lite/Splash-Only.lpx"
+    },
+    {
+      "mode": "rule",
+      "app": "全局",
+      "hosts": [
+        "adashx.m.taobao.com"
+      ],
+      "pattern": "DOMAIN,adashx.m.taobao.com",
+      "action": "REJECT",
+      "phase": "dns",
+      "note": "阿里广告效果回传",
+      "source": "lite/Splash-Only.lpx"
+    },
+    {
+      "mode": "rule",
+      "app": "全局",
+      "hosts": [
+        "h-adashx.ut.taobao.com"
+      ],
+      "pattern": "DOMAIN,h-adashx.ut.taobao.com",
+      "action": "REJECT",
+      "phase": "dns",
+      "note": "阿里广告效果回传（HTTPS）",
+      "source": "lite/Splash-Only.lpx"
     }
   ],
   "unsupported_splash": {

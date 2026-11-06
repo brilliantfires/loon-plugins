@@ -1,5 +1,5 @@
 #!name=开屏广告
-#!desc=仅处理明确开屏入口；不保证覆盖所有 App 的所有开屏。无 JS、无定时任务、无外部资源。关闭开关不移除静态 MitM 域名；不用时停用整个插件。
+#!desc=仅处理明确开屏入口；不保证覆盖所有 App 的所有开屏。无 JS、无定时任务、无外部资源。含阿里妈妈广告链路静态域名拦截，不受 App 开关控制。关闭开关不移除静态 MitM 域名；不用时停用整个插件。
 #!author=原规则：可莉、RuCu6、fmz200、zmqcherish、Sliverkiss、kokoryh、Keywos、app2smile；精简整理：Codex
 #!homepage=https://github.com/brilliantfires/loon-plugins
 #!tag=去广告
@@ -24,6 +24,14 @@ app_Xiaohongshu = switch,true,tag=小红书
 app_Xiaoxiang = switch,true,tag=小象超市
 app_Zhihu = switch,true,tag=知乎
 app_Zhuanzhuan = switch,true,tag=转转
+
+[Rule]
+# 阿里妈妈广告链路：曝光上报、竞价下发、效果回传，以及广告素材 CDN
+# 静态域名规则，不受 App 开关控制；对淘宝、闲鱼、优酷等阿里系 App 同样生效
+DOMAIN-SUFFIX,tanx.com,REJECT
+DOMAIN-SUFFIX,atanx.alicdn.com,REJECT
+DOMAIN,adashx.m.taobao.com,REJECT
+DOMAIN,h-adashx.ut.taobao.com,REJECT
 
 [Rewrite]
 

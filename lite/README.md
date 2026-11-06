@@ -42,6 +42,8 @@ https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/lite/InApp-Ad
 
 只去开屏也仍可能解密列入名单的主机上的普通 HTTPS 流量；“只改开屏接口”和“只在开屏期间解密”不是同一件事。其他已启用插件和主配置中的域名也会影响最终解密范围。
 
+开屏版还包含一组**静态域名规则**，用于拦截阿里妈妈广告链路：`tanx.com`（曝光、竞价）、`atanx.alicdn.com`（广告素材 CDN）、`adashx.m.taobao.com` 与 `h-adashx.ut.taobao.com`（效果回传）。这些规则不挂在任何 App 开关下，插件启用即生效，因此会同时作用于淘宝、闲鱼、优酷等阿里系 App；它们也不需要 MitM 解密。如果出现图片缺失或页面异常，先停用整个插件对照，再单独去掉 `atanx.alicdn.com` 这一条。
+
 如果只使用少数 App，更省处理范围的方式是只保留这些 App 的规则：在这两份插件中删掉其他 App 的 `request if` / `response if` 行，再删除 `[MitM]` 段中对应主机。App ID 与主机对照见 `manifest.json` 的 `summary` 和各条规则的 `hosts`。豆瓣仍默认关闭。单独关掉开关适合临时排障；物理裁剪适合长期不用某些 App。
 
 ## 覆盖范围及明确删去的功能
