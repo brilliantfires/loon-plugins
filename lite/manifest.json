@@ -213,7 +213,7 @@
       "hosts": [
         "acs.m.goofish.com"
       ],
-      "pattern": "/^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idlecommerce\\.splash\\.ads\\//i",
+      "pattern": "/^https:\\/\\/acs\\.m\\.goofish\\.com\\/[^?]*[\\/.]splash[a-z0-9_.\\/-]*(\\?|$)/i",
       "action": "reject_dict(200)",
       "phase": "request",
       "note": "仅明确开屏接口；排除 scene.restore 全场景拦截",

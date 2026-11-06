@@ -54,8 +54,8 @@ request if ${app_Douban} == true && ${url} ~= /^https:\/\/api\.douban\.com\/v\d\
 response if ${app_Douban} == true && ${url} ~= /^https:\/\/frodo\.douban\.com\/api\/v2\/feature_switch(?:\?|$)/i then response.json.jq(`if type=="object" then . as $original | try (.splash_sdk_info=[] | .enable_splash_client_bid=false | .splash_client_bid_use_preload=false) catch $original else . end`)
 
 # 闲鱼
-# 仅明确开屏接口；排除 scene.restore 全场景拦截
-request if ${app_Goofish} == true && ${url} ~= /^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.taobao\.idlecommerce\.splash\.ads\//i then reject_dict(200)
+# 开屏：路径中含 /splash 或 .splash 的接口统一返回空 JSON，兼容无 query 与路径改版
+request if ${app_Goofish} == true && ${url} ~= /^https:\/\/acs\.m\.goofish\.com\/[^?]*[\/.]splash[a-z0-9_.\/-]*(\?|$)/i then reject_dict(200)
 
 # 京东
 # 仅 start 开屏图片和展示次数
