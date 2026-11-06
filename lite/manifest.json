@@ -129,7 +129,7 @@
       "hosts": [
         "m5.amap.com"
       ],
-      "pattern": "/^https:\\/\\/m5\\.amap\\.com\\/ws\\/valueadded\\/alimama\\/splash_screen\\?/i",
+      "pattern": "/^https:\\/\\/m5\\.amap\\.com\\/[^?]*\\/splash[a-z0-9_\\/-]*(\\?|$)/i",
       "action": "reject_dict(200)",
       "phase": "request",
       "note": "仅开屏接口",
@@ -142,7 +142,7 @@
         "m5.amap.com"
       ],
       "pattern": "/^https:\\/\\/m5\\.amap\\.com\\/ws\\/shield\\/frogserver\\/aocs\\/updatable\\/1(?:\\?|$)/i",
-      "action": "response.json.jq(`if type==\"object\" then . as $original | try (del(.data.splashscreen, .data.SplashScreenControl, .data.splashview_config)) catch $original else . end`)",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.data|type)==\"object\" then .data |= with_entries(select((.key|test(\"^[Ss]plash\"))|not)) else . end) catch $original else . end`)",
       "phase": "response",
       "note": "只移除启动配置内三个开屏字段",
       "source": "plugins/Amap.lpx"
@@ -987,7 +987,7 @@
   },
   "source_sha256": {
     "plugins/12306.lpx": "3d51c94f59fc390a8b23374e1d61d66a49ef06c727e5215384df8ef572a1eeb2",
-    "plugins/Amap.lpx": "d70026c0e84bfb1e273564c8d5fb67f82c288bd6d8cecc1afbad8666b67665de",
+    "plugins/Amap.lpx": "6bd4332b4ce3ca4e82b91336ba66497a42ead4418a0d9976407bb437c9d34d37",
     "plugins/BaiduNetdisk.lpx": "4b0a77610d201ce1c2d4ef60858509e338b01b18007732b7b2ac039bb6c234db",
     "plugins/Bilibili.lpx": "6e27b267f576bbe3cdc4e314c2a09fdd1f6b8734e7c045b367a76264fbda5eaa",
     "plugins/Cainiao.lpx": "3a98dca2366009e8ccd87dbd931010aa09e05f189c6991acfd5cbcef2cb46146",
