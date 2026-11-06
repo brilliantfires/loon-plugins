@@ -1012,6 +1012,18 @@
       "phase": "dns",
       "note": "阿里广告效果回传（HTTPS）",
       "source": "lite/Splash-Only.lpx"
+    },
+    {
+      "mode": "inapp",
+      "app": "知乎",
+      "hosts": [
+        "api.zhihu.com"
+      ],
+      "pattern": "/^https:\\/\\/api\\.zhihu\\.com\\/commercial_api\\/banners_v3\\/app_topstory_banner(?:\\?|$)/",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.banner|type)==\"string\" then .banner |= (. as $b | try ((fromjson) | if (.ads|type)==\"array\" then .ads=[] else . end | tojson) catch $b) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "推荐页顶部横幅；banner 为嵌套 JSON 字符串，清空 ads 后保持字符串格式",
+      "source": "lite/InApp-Ads.lpx"
     }
   ],
   "unsupported_splash": {

@@ -178,6 +178,9 @@ response if ${app_Zhihu} == true && ${url} ~= /^https:\/\/api\.zhihu\.com\/next-
 # 只处理应用内三个广告字段，不改 launch
 response if ${app_Zhihu} == true && ${url} ~= /^https:\/\/api\.zhihu\.com\/commercial_api\/(?:app_float_layer|launch_v2)(?:\?|$)/ then response.json.jq(`if type=="object" then . as $original | try (reduce ["app_float_video","float_layer","search_middle_page"][] as $k (.; if has($k) then .[$k] |= (if type=="string" then . as $original | try (fromjson | .ads=[] | tojson) catch $original elif type=="object" then .ads=[] else . end) else . end)) catch $original else . end`)
 
+# 推荐页顶部横幅：banner 是嵌套 JSON 字符串，清空 ads 并保持原字符串格式
+response if ${app_Zhihu} == true && ${url} ~= /^https:\/\/api\.zhihu\.com\/commercial_api\/banners_v3\/app_topstory_banner(?:\?|$)/ then response.json.jq(`if type=="object" then . as $original | try (if (.banner|type)=="string" then .banner |= (. as $b | try ((fromjson) | if (.ads|type)=="array" then .ads=[] else . end | tojson) catch $b) else . end) catch $original else . end`)
+
 # 转转
 # 只保留推广弹窗，不改商品推荐和我的页面
 request if ${app_Zhuanzhuan} == true && ${url} ~= /^https:\/\/app\.zhuanzhuan\.com\/zzopen\/popwindow\/getallpopwin(?:\?|$)/i then reject_dict(200)
