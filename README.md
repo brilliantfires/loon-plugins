@@ -13,7 +13,7 @@
 
 请先停用对应旧插件，避免叠加。精简版缩小了广告覆盖范围，尚未做手机能耗实测；App 开关不动态撤销静态 MitM 域名。不使用内部版时请停用整个插件。
 
-[安装与覆盖说明](lite/README.md) · [逐 App 审计](lite/AUDIT.md) · [下载精简包](https://brilliantfires.github.io/loon-plugins/lite/Loon-Ads-Lite-2026-11-05.zip)
+[安装与覆盖说明](lite/README.md) · [逐 App 审计](lite/AUDIT.md)
 
 ## 导入
 
@@ -73,34 +73,28 @@ https://cdn.jsdelivr.net/gh/brilliantfires/loon-plugins@main/plugins/12306.lpx
 
 最终导入文件位于 `plugins/`，公共地址使用已构建的 GitHub Pages。文件路径不发生变化时，推送更新后无需重新修改导入链接。
 
-直接修改最终插件：
+直接修改 `plugins/` 下的插件后推送即可：
 
 ```bash
 cd /Users/Mac/工作区/CodeTemp/Agent/None/loon-plugins
-./tools/validate.sh
 git add -A
 git commit -m "Update Loon plugins"
 git push
 ```
 
-如果修改的是 `sources/original/` 中的归档规则，则先重新生成最终文件：
+需要注意两点：
 
-```bash
-python3 tools/render_plugins.py
-./tools/validate.sh
-git add -A
-git commit -m "Rebuild Loon plugins"
-git push
-```
+- 插件通过 GitHub Pages 远程加载 `scripts/` 下的脚本和 jq 文件，修改这些文件必须一并提交，否则手机端会取到旧版本或 404。
+- 插件名称必须与 `catalog.json` 中的应用名一致，这是之前出图与导入列表的约定。
 
 `main` 地址用于持续更新。需要固定版本时，可将链接中的 `main` 换成对应提交哈希；升级时再修改链接。
 
 ## 目录
 
-- `plugins/`：可直接导入的最终插件
-- `scripts/`：插件使用的本地固定脚本、jq 资源和所需许可证
-- `sources/original/`：迁移前的本地原始文件
-- `catalog.json`：机器可读的插件清单
-- `tools/validate.sh`：结构、命名、依赖和重复规则检查
+- `plugins/`：可直接导入的最终插件，共 27 个
+- `lite/`：零 JS 的精简版，`Splash-Only.lpx` 与 `InApp-Ads.lpx` 两份
+- `scripts/`：插件远程加载的固定脚本、jq 资源和所需许可证
 - `docs/AUDIT.md`：逐项审计、合并结果和待验证事项
+- `docs/apps/`：整理前各应用的说明文件与维护记录
+- `catalog.json`：机器可读的插件清单，`source` 字段记录规则来源
 - `NOTICE.md`：第三方作者与来源说明

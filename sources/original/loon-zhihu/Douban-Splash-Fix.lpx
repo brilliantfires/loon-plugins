@@ -1,8 +1,0 @@
-#!name=豆瓣
-#!desc=针对抓包中已拦截 splash 接口但 SDK 广告仍成功的问题，仅修改 feature_switch 中的三个开屏字段。配合原有豆瓣规则使用。
-
-[Rewrite]
-^https:\/\/frodo\.douban\.com\/api\/v2\/feature_switch(?:\?|$) response-body-json-jq '.splash_sdk_info=[]|.enable_splash_client_bid=false|.splash_client_bid_use_preload=false'
-
-[Mitm]
-hostname = frodo.douban.com

@@ -26,7 +26,7 @@
 | 仅去开屏 | https://brilliantfires.github.io/loon-plugins/lite/Splash-Only.lpx |
 | App 内去广告 | https://brilliantfires.github.io/loon-plugins/lite/InApp-Ads.lpx |
 
-[下载完整安装包](https://brilliantfires.github.io/loon-plugins/lite/Loon-Ads-Lite-2026-11-05.zip) · [GitHub 源码目录](https://github.com/brilliantfires/loon-plugins/tree/main/lite)
+[GitHub 源码目录](https://github.com/brilliantfires/loon-plugins/tree/main/lite)
 
 若 Pages 暂时无法访问，可以使用对应的 GitHub Raw 地址：
 
@@ -42,13 +42,7 @@ https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/lite/InApp-Ad
 
 只去开屏也仍可能解密列入名单的主机上的普通 HTTPS 流量；“只改开屏接口”和“只在开屏期间解密”不是同一件事。其他已启用插件和主配置中的域名也会影响最终解密范围。
 
-如果只使用少数 App，更省处理范围的方式是生成只包含这些 App 的版本。随附 `select_apps.py` 会同时删除未选中的规则及 MitM 域名：
-
-```bash
-python3 select_apps.py --apps Bilibili,Zhihu,Weibo,Xiaohongshu --enable-inapp --output selected
-```
-
-这是示例选择，不是要求你使用这四个 App。生成后的两份文件在 `selected/`；用它们替换完整聚合版，不能叠加。App ID 可从 `manifest.json` 的 `summary` 查看。豆瓣仍默认关闭。单独关掉开关适合临时排障；物理裁剪适合长期不用某些 App。
+如果只使用少数 App，更省处理范围的方式是只保留这些 App 的规则：在这两份插件中删掉其他 App 的 `request if` / `response if` 行，再删除 `[MitM]` 段中对应主机。App ID 与主机对照见 `manifest.json` 的 `summary` 和各条规则的 `hosts`。豆瓣仍默认关闭。单独关掉开关适合临时排障；物理裁剪适合长期不用某些 App。
 
 ## 覆盖范围及明确删去的功能
 
@@ -86,7 +80,7 @@ python3 select_apps.py --apps Bilibili,Zhihu,Weibo,Xiaohongshu --enable-inapp --
 
 ## 验证与来源
 
-- 本地仓库中的 `python3 verify.py`（安装包仅附结果，不附依赖原仓库的测试程序）：规则开关保护、正则编译、JQ 异常数据与幂等性、正常内容保留、双插件字段分离、实际保存的酷安/麦当劳抓包回归。抓包正文不随包分发。
+- 验证覆盖：规则开关保护、正则编译、JQ 异常数据与幂等性、正常内容保留、双插件字段分离，以及已保存的酷安/麦当劳抓包回归。抓包正文不随包分发；测试程序依赖原仓库结构，未随本次整理保留。
 - `verification.json`：离线结果和验证边界。没有调用真实 Loon 解析器，没有手机能耗实测。
 - `manifest.json`：每条规则来源、保留理由、所需主机、原文件 SHA-256，以及未支持的 App 原因。
 - `inventory.json`：原 27 个插件的静态清单。六个重点插件与当前公开 GitHub Pages 逐字比对一致；手机是否缓存旧版本仍未知。
