@@ -156,7 +156,7 @@
   {
     "id": "Amap",
     "name": "高德地图",
-    "desc": "移除开屏、首页推荐、搜索推荐、打车广告、地点推荐及广告，并精简“我的”页面。",
+    "desc": "移除开屏、首页推荐、搜索推荐、打车广告，并精简“我的”页面；地点详情页广告暂无处理规则。",
     "plugin_url": "https://brilliantfires.github.io/loon-plugins/plugins/Amap.lpx",
     "source": "Amap-Loon/Amap.lpx"
   },
