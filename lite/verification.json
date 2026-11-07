@@ -1,11 +1,12 @@
 {
   "offline_assertions": 1073,
-  "rule_count": 71,
-  "jq_count": 35,
+  "rule_count": 72,
+  "jq_count": 36,
   "status": "passed",
   "private_capture_responses": {
     "Coolapk_init": 1,
-    "McDonalds_splash": 2
+    "McDonalds_splash": 2,
+    "JD_queryPagePopWindow": 1
   },
   "limitations": [
     "Not a Loon parser test",

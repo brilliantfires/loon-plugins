@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-05",
+  "date": "2026-11-07",
   "summary": {
     "splash": {
       "apps": [
@@ -39,7 +39,7 @@
         "tiebac.baidu.com",
         "wbapp.uve.weibo.com"
       ],
-      "rules": 21,
+      "rules": 22,
       "scripts": 0
     },
     "inapp": {
@@ -230,6 +230,18 @@
       "phase": "response",
       "note": "仅 start 开屏图片和展示次数",
       "source": "plugins/JD.lpx"
+    },
+    {
+      "mode": "splash",
+      "app": "JD",
+      "hosts": [
+        "api.m.jd.com"
+      ],
+      "pattern": "/^https:\\/\\/api\\.m\\.jd\\.com\\/client\\.action\\?(?:[^#]*&)?functionId=(?:queryPagePopWindow)(?:&|$)/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.stayWindowModule|type)==\"object\" then del(.stayWindowModule) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "抓包命中启动期弹层模块；清除 stayWindowModule，可能同时隐藏非广告弹窗",
+      "source": "用户提供的京东抓包（2026-11-07）"
     },
     {
       "mode": "splash",

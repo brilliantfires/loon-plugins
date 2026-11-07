@@ -6,7 +6,7 @@
 #!system=iOS,iPadOS
 #!system_version=15
 #!loon_version=3.5.1(998)
-#!date=2026-11-06 21:45
+#!date=2026-11-07 15:17
 
 [Argument]
 app_12306 = switch,true,tag=12306
@@ -68,6 +68,8 @@ request if ${app_Goofish} == true && ${url} ~= /^https:\/\/acs\.m\.goofish\.com\
 # 京东
 # 仅 start 开屏图片和展示次数
 response if ${app_JD} == true && ${url} ~= /^https:\/\/api\.m\.jd\.com\/client\.action\?(?:[^#]*&)?functionId=(?:start)(?:&|$)/i then response.json.jq(`if type=="object" then . as $original | try (if has("images") then .images=[] else . end | if has("showTimesDaily") then .showTimesDaily=0 else . end) catch $original else . end`)
+# 抓包命中启动期 queryPagePopWindow 返回 stayWindowModule；清除此弹层承载字段（其中可能含非广告弹窗）
+response if ${app_JD} == true && ${url} ~= /^https:\/\/api\.m\.jd\.com\/client\.action\?(?:[^#]*&)?functionId=(?:queryPagePopWindow)(?:&|$)/i then response.json.jq(`if type=="object" then . as $original | try (if (.stayWindowModule|type)=="object" then del(.stayWindowModule) else . end) catch $original else . end`)
 
 # 麦当劳
 # 沿用开屏投放过期方案
