@@ -106,8 +106,8 @@
         "weibo.com",
         "www.xiaohongshu.com"
       ],
-      "rules": 50,
-      "scripts": 0
+      "rules": 53,
+      "scripts": 1
     }
   },
   "rules": [
@@ -737,6 +737,18 @@
     },
     {
       "mode": "inapp",
+      "app": "NeteaseCloudMusic",
+      "hosts": [
+        "interface*.music.163.com"
+      ],
+      "pattern": "/^https?:\\/\\/interface\\d?\\.music\\.163\\.com\\/eapi\\/link\\/(?:page\\/rcmd\\/resource\\/show|scene\\/show\\/resource)(?:\\?|$)/i",
+      "action": "script(NeteaseCloudMusicAdOnly.js)",
+      "phase": "response",
+      "note": "只处理首页明确 VIP 推广横幅与 homeMidPopUp global_popup；保留普通首页块、徽章与二级楼层",
+      "source": "lite/InApp-Ads.lpx"
+    },
+    {
+      "mode": "inapp",
       "app": "Pinduoduo",
       "hosts": [
         "api.pinduoduo.com"
@@ -1144,6 +1156,7 @@
     "plugins/Zhuanzhuan.lpx": "2028c077cf6e03fde922191cee529c44f2f0461a647bcfc4b184d8f499c9afe0",
     "scripts/Taobao.js": "bfc6b8b157f18896a0de0aea40e0f959397972c036e3b374ba6737e71d9184a6",
     "scripts/Weibo.js": "6586579f5f4401a720fa3103bd5db70f20598377aa5f5ceedf6131445c8c8fba",
-    "scripts/Xiaohongshu.js": "5ad50fe21ff661147c7106d58958745d2df4afbd1d97724191364a89d12fe6cb"
+    "scripts/Xiaohongshu.js": "5ad50fe21ff661147c7106d58958745d2df4afbd1d97724191364a89d12fe6cb",
+    "scripts/NeteaseCloudMusicAdOnly.js": "46168d95a8ce871c9761e18503302e05b8adb2c6beb7d7bf3f686acf85e1974b"
   }
 }

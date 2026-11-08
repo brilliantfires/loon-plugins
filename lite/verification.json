@@ -1,14 +1,17 @@
 {
-  "offline_assertions": 1078,
-  "rule_count": 73,
+  "offline_assertions": 1098,
+  "rule_count": 76,
   "jq_count": 36,
+  "script_count": 1,
   "status": "passed",
   "private_capture_responses": {
     "Coolapk_init": 1,
     "McDonalds_splash": 2,
     "JD_queryPagePopWindow": 1,
     "Goofish_idleadv_scene_restore": 1,
-    "12306_getAdList": 3
+    "12306_getAdList": 3,
+    "NeteaseCloudMusic_home_vip_banner": 2,
+    "NeteaseCloudMusic_vip_popup": 2
   },
   "limitations": [
     "Not a Loon parser test",

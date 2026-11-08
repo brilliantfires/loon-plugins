@@ -1,12 +1,12 @@
 #!name=应用内广告
-#!desc=只保留广告过滤；默认全部关闭，请按需打开 App 开关。无 JS、无定时任务、无外部资源。关闭开关不移除静态 MitM 域名；不用时停用整个插件。
+#!desc=只保留广告过滤；默认全部关闭，请按需打开 App 开关。只有网易云的两类加密活动响应使用窄范围脚本。关闭开关不移除静态 MitM 域名；不用时停用整个插件。
 #!author=原规则：可莉、RuCu6、fmz200、zmqcherish、Sliverkiss、kokoryh、Keywos、app2smile；精简整理：Codex
 #!homepage=https://github.com/brilliantfires/loon-plugins
 #!tag=去广告
 #!system=iOS,iPadOS
 #!system_version=15
 #!loon_version=3.5.1(998)
-#!date=2026-11-06 21:45
+#!date=2026-11-08 20:30
 
 [Argument]
 app_12306 = switch,false,tag=12306
@@ -123,6 +123,8 @@ response if ${app_McDonalds} == true && ${url} ~= /^https:\/\/api\.mcd\.cn\/bff\
 # 网易云音乐
 # 仅独立广告响应；移除 AES/gzip 脚本及页面白名单
 response if ${app_NeteaseCloudMusic} == true && ${url} ~= /^https?:\/\/interface\d?\.music\.163\.com\/e?api\/(ocpc\/)?ad\//i then response.body.mock("text", "")
+# 只处理两类 AES/gzip 活动响应：首页推广横幅与 global_popup；保留徽章、二级楼层和普通首页块
+response if ${app_NeteaseCloudMusic} == true && ${url} ~= /^https?:\/\/interface\d?\.music\.163\.com\/eapi\/link\/(?:page\/rcmd\/resource\/show|scene\/show\/resource)(?:\?|$)/i then script("https://brilliantfires.github.io/loon-plugins/scripts/NeteaseCloudMusicAdOnly.js") with tag="网易云活动广告", requires_body=true, binary_body_mode=true, timeout=10
 
 # 拼多多
 # 仅订单营销横幅；不封 titan 长连接和日志域名，不动底栏
