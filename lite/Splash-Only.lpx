@@ -6,7 +6,7 @@
 #!system=iOS,iPadOS
 #!system_version=15
 #!loon_version=3.5.1(998)
-#!date=2026-11-07 15:17
+#!date=2026-11-08 20:05
 
 [Argument]
 app_12306 = switch,true,tag=12306
@@ -64,6 +64,8 @@ response if ${app_Douban} == true && ${url} ~= /^https:\/\/frodo\.douban\.com\/a
 # 闲鱼
 # 开屏：路径中含 /splash 或 .splash 的接口统一返回空 JSON，兼容无 query 与路径改版
 request if ${app_Goofish} == true && ${url} ~= /^https:\/\/acs\.m\.goofish\.com\/[^?]*[\/.]splash[a-z0-9_.\/-]*(\?|$)/i then reject_dict(200)
+# 2026-11-08 冷启动抓包新增：广告场景恢复接口在 appLaunch 阶段触发
+request if ${app_Goofish} == true && ${url} ~= /^https:\/\/acs\.m\.goofish\.com\/gw\/mtop\.idle\.idleadv\.scene\.restore\//i then reject_dict(200)
 
 # 京东
 # 仅 start 开屏图片和展示次数

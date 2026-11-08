@@ -1,12 +1,13 @@
 {
-  "offline_assertions": 1073,
-  "rule_count": 72,
+  "offline_assertions": 1074,
+  "rule_count": 73,
   "jq_count": 36,
   "status": "passed",
   "private_capture_responses": {
     "Coolapk_init": 1,
     "McDonalds_splash": 2,
-    "JD_queryPagePopWindow": 1
+    "JD_queryPagePopWindow": 1,
+    "Goofish_idleadv_scene_restore": 1
   },
   "limitations": [
     "Not a Loon parser test",

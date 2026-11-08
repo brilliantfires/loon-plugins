@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-07",
+  "date": "2026-11-08",
   "summary": {
     "splash": {
       "apps": [
@@ -39,7 +39,7 @@
         "tiebac.baidu.com",
         "wbapp.uve.weibo.com"
       ],
-      "rules": 22,
+      "rules": 23,
       "scripts": 0
     },
     "inapp": {
@@ -216,8 +216,20 @@
       "pattern": "/^https:\\/\\/acs\\.m\\.goofish\\.com\\/[^?]*[\\/.]splash[a-z0-9_.\\/-]*(\\?|$)/i",
       "action": "reject_dict(200)",
       "phase": "request",
-      "note": "仅明确开屏接口；排除 scene.restore 全场景拦截",
+      "note": "仅路径含 splash 的明确开屏接口",
       "source": "plugins/Goofish.lpx"
+    },
+    {
+      "mode": "splash",
+      "app": "Goofish",
+      "hosts": [
+        "acs.m.goofish.com"
+      ],
+      "pattern": "/^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.idle\\.idleadv\\.scene\\.restore\\//i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "冷启动抓包命中 restoreStage=appLaunch；用户反馈旧规则的 splash 路径未清除该开屏，需真机复核",
+      "source": "用户提供的闲鱼冷启动抓包（2026-11-08）"
     },
     {
       "mode": "splash",
