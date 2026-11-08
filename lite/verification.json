@@ -1,7 +1,7 @@
 {
-  "offline_assertions": 1109,
-  "rule_count": 77,
-  "jq_count": 37,
+  "offline_assertions": 1098,
+  "rule_count": 76,
+  "jq_count": 36,
   "script_count": 1,
   "status": "passed",
   "private_capture_responses": {
@@ -13,24 +13,8 @@
     "NeteaseCloudMusic_home_vip_banner": 2,
     "NeteaseCloudMusic_vip_popup": 2
   },
-  "experimental_plugins": {
-    "X": {
-      "fixture_source": "Synthetic timeline matching publicly observed X promoted-entry and promotedMetadata fields",
-      "real_capture": false,
-      "checks": [
-        "promoted-tweet array entry removed",
-        "itemContent promotedMetadata entry removed",
-        "tweet_results promoted_metadata entry removed",
-        "nested conversationthread promoted entry removed",
-        "promoted pin instruction removed",
-        "ordinary tweet retained",
-        "ordinary tweet body that mentions promoted-tweet retained",
-        "second ordinary tweet retained",
-        "pagination cursor entry retained",
-        "TimelineReplaceCursor instruction retained",
-        "jq replay completed without syntax error"
-      ]
-    }
+  "disabled_experiments": {
+    "X": "Native MITM plugin withdrawn after device behavior showed unloaded posts and ads remained"
   },
   "limitations": [
     "Not a Loon parser test",

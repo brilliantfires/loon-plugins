@@ -35,17 +35,19 @@ https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/lite/Splash-O
 https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/lite/InApp-Ads.lpx
 ```
 
-## X 去广告实验版
+## X 原生 App 去广告：已撤回
 
-X 原生 iOS 客户端的 GraphQL 接口可能启用证书固定。部分设备开启 MITM 后会拒绝刷新，因此 X 规则不并入日常使用的应用内聚合插件，而是作为独立实验：
+2026-11-08 的原生 MITM 实验会让 X 出现“帖子暂时无法载入”，同时仍可能保留广告，因此已撤回。`X-Ads-Test.lpx` 现在的版本不含 Rewrite、Script 或 MitM，只用于提示停用；已经导入旧版的设备必须在 Loon 中删除整个插件，仅关闭插件内部开关不会撤销旧版静态 MitM。
 
-- 导入：https://brilliantfires.github.io/loon-plugins/lite/X-Ads-Test.lpx
-- 命中条件：GraphQL 时间线中带 `promoted-tweet-*` / `promoted-trend-*` 入口，或带 `promotedMetadata` / `promoted_metadata`
-- 保留内容：普通帖子、引用内容、分页游标
-- 已知限制：若开启后 X 无法刷新，说明该版本 API 的证书固定拒绝 Loon MITM。必须停用并删除实验插件，关闭开关无法撤销静态 MitM
+当前没有可靠的 Loon 方案能同时满足“过滤 X 原生 App 推广帖”和“不破坏时间线加载”。X 原生 API 存在证书固定、私有 GraphQL 结构和客户端校验；V2EX 曾在 2025 年流传的 IPv6 地区绕法也已明确失效。
 
-这个实验依据公开的 X 广告响应结构，尚未取得 X iOS 原生时间线 API 的真实抓包，也没有手机命中结果。
+可行的 iOS 路线是使用 Safari 的 X 网页版，并安装专门隐藏网页推广帖的 Safari 扩展。网页扩展可以直接处理页面结构，不需要 MITM 原生 API，也不会影响 Loon 对其他 App 的去广告。
 
+1. App Store 安装免费的 [Sink It for Twitter/X](https://apps.apple.com/us/app/sink-it-for-twitter-x/id6464326394)。
+2. 在 iOS 设置中启用 Safari 扩展，并允许它访问 `x.com`。
+3. 用 Safari 打开 `https://x.com`，在扩展设置中开启“移除推广内容”；可以再从分享菜单添加到主屏幕。
+
+如果必须使用原生 X App，目前只有官方付费档能减少部分广告：Premium+ 可让时间线的推广帖消失，但主页、回复、Explore 等位置仍可能显示广告。X 设置里的“关闭个性化广告”只影响定向，不会让广告消失。来源：[X Premium FAQ](https://help.x.com/en/using-x/x-premium-faq)。
 
 ## 开关的重要限制
 

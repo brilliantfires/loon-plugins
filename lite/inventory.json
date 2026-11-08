@@ -6,7 +6,7 @@
     "rule": 41
   },
   "old_unique_host_patterns": 157,
-  "lite_unique_host_patterns": 44,
+  "lite_unique_host_patterns": 41,
   "old_inventory": [
     {
       "app": "12306",

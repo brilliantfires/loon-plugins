@@ -108,18 +108,6 @@
       ],
       "rules": 53,
       "scripts": 1
-    },
-    "experimental": {
-      "apps": [
-        "X"
-      ],
-      "hosts": [
-        "api.x.com",
-        "api.twitter.com",
-        "x.com"
-      ],
-      "rules": 1,
-      "scripts": 0
     }
   },
   "rules": [
@@ -1120,20 +1108,6 @@
       "phase": "request",
       "note": "旧版客户端仍走该主机；adkeyword 与 nbnetflow 广告接口统一返回空",
       "source": "lite/InApp-Ads.lpx"
-    },
-    {
-      "mode": "experimental",
-      "app": "X",
-      "hosts": [
-        "api.x.com",
-        "api.twitter.com",
-        "x.com"
-      ],
-      "pattern": "/^https?:\\/\\/(?:api\\.x\\.com|api\\.twitter\\.com|x\\.com)\\/(?:i\\/api\\/)?graphql\\/[^?]+\\/(?:HomeTimeline|HomeLatestTimeline|SearchTimeline|TweetDetail|ListLatestTweetsTimeline|Bookmarks|NotificationsTimeline|ExploreTimeline|UserTweets|UserMedia|UserTweetsAndReplies)(?:\\?|$)/i",
-      "action": "response.json.jq(递归删除带 promoted-tweet/promoted-trend 入口或 promotedMetadata/promoted_metadata 的传播节点)",
-      "phase": "response",
-      "note": "独立实验版；合成回放通过，尚无 X iOS 原生时间线 API 抓包。若启用后无法刷新，必须卸载插件",
-      "source": "lite/X-Ads-Test.lpx"
     }
   ],
   "unsupported_splash": {
@@ -1154,7 +1128,7 @@
     "Taobao": "现有 JS 是开屏和通用活动模板，跨 App 的拦截不纳入淘宝内部去广告",
     "JD-Takeout": "现有规则以推荐、钱包、页面入口删除为主，缺少明确广告判据",
     "YouTube": "需要 Protobuf 脚本及视频域名解密；本轮以零 JS 原生版为基线，不纳入。需要时单独启用原 YouTube 插件并测量开销。",
-    "X": "原生 GraphQL 接口可能启用证书固定；规则放在独立 X-Ads-Test.lpx，避免静态 MitM 影响日常聚合插件"
+    "X": "原生 MITM 实验已撤回；启用后会破坏时间线加载且广告仍可能出现。X-Ads-Test.lpx 现为零规则停用提示"
   },
   "source_sha256": {
     "plugins/12306.lpx": "3d51c94f59fc390a8b23374e1d61d66a49ef06c727e5215384df8ef572a1eeb2",

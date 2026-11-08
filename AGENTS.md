@@ -7,19 +7,19 @@
 | 使用方 | 导入什么 | 说明 |
 | --- | --- | --- |
 | 手机（唯一真实用户） | 只导入 `lite/Splash-Only.lpx` 与 `lite/InApp-Ads.lpx` | 其它 `plugins/*.lpx` 不参与日常使用 |
-| 可选实验 | `lite/X-Ads-Test.lpx` | 单独验证 X 原生接口是否允许 MITM；失败时必须卸载，不能并入日常聚合 |
+| 已停用 | `lite/X-Ads-Test.lpx` | 无 Rewrite、Script 或 MitM 的撤回提示；X 原生 App 无法可靠通过 Loon 安全过滤 |
 | 仓库读者 | 全部文件 | 完整版 27 个插件 + `scripts/` 远程脚本 |
 
 推论：
 
-- **日常规则改动默认落在 `lite/` 两份聚合插件里**，X 这类高风险实验单独放入 `lite/X-Ads-Test.lpx`；只在 `plugins/` 里改，用户手机看不到效果。
+- **日常规则改动默认落在 `lite/` 两份聚合插件里**；X 这类证书固定或响应结构高风险的 App 不加入 MITM 聚合，只在 `plugins/` 里改，用户手机看不到效果。
 - `plugins/` 与多数 `scripts/` 是历史资产，不要为了“保持一致”顺手大改；确需同步时说明理由。
 - `scripts/*.js|*.jq` 是**运行时从 Pages 拉取**的资源，不是本地依赖；删了会导致对应完整版插件失效。精简版当前只引用 `NeteaseCloudMusicAdOnly.js`。
 
 ## 二、目录
 
 ```
-lite/          两份日常插件、一个隔离的 X 实验插件及其文档、清单、校验和
+lite/          两份日常插件、一个 X 停用提示文件及其文档、清单、校验和
 plugins/       27 个完整版插件（部分依赖 scripts/）
 scripts/       远程脚本资源；精简版只引用网易云活动广告窄脚本
 docs/          审计文档与历史 App 说明
@@ -33,7 +33,7 @@ AGENTS.md      本文件
 
 按顺序做，**不要跳步**：
 
-1. **改规则**（`lite/Splash-Only.lpx`、`lite/InApp-Ads.lpx`，或隔离实验 `lite/X-Ads-Test.lpx`）。
+1. **改规则**（`lite/Splash-Only.lpx` 或 `lite/InApp-Ads.lpx`）。
 2. **同步 `#!date`，格式 `YYYY-MM-DD HH:MM`**。Loon 插件详情页原样显示该字段（官方文档：“该值会按原样显示”，不做解析），带时分才能区分同一天内的多次改动；只写日期会让用户以为没更新（真实发生过）。
 3. **同步 `lite/manifest.json`**：新增/修改的规则要有一条对应记录（`mode`/`app`/`hosts`/`pattern`/`action`/`phase`/`note`/`source`）。域名规则用 `mode: "rule"`、`phase: "dns"`。
 4. **重新生成校验和**（`lite/SHA256SUMS` 覆盖 10 个文件）：
@@ -46,6 +46,8 @@ AGENTS.md      本文件
 6. **若改动 `scripts/NeteaseCloudMusicAdOnly.js`**：运行 `node --check`，用用户抓包做加解密/保留内容回放，并更新 `manifest.json` 里的脚本 SHA-256。
 7. **提交并推送**到 `main`。
 8. **确认线上状态**。看一次即可，不要轮询（见第十三节）；线上还是旧版本属正常，不代表失败。
+
+`lite/X-Ads-Test.lpx` 是已撤回实验的占位文件，必须保持零 Rewrite、零 Script、零 MitM。X 原生 iOS 客户端不适合由 Loon 过滤：启用 MITM 会破坏时间线加载，而关闭内部开关不会撤销静态 MitM。需要 X 去广告时只建议使用 Safari 网页版扩展，不能重新把 X 主机加入日常聚合插件。
 
 ## 四、GitHub Pages 有延迟，但只需要看一次
 
