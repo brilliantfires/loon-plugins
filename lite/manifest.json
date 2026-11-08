@@ -118,9 +118,9 @@
         "ad.12306.cn"
       ],
       "pattern": "/^https:\\/\\/ad\\.12306\\.cn\\/ad\\/ser\\/getAdList(?:\\?|$)/i",
-      "action": "response.body.mock(\"json\", `{\"code\":\"00\",\"materialsList\":[{\"billMaterialsId\":\"0\",\"filePath\":\"h\",\"creativeType\":1}],\"advertParam\":{\"skipTime\":0},\"message\":\"无广告返回\"}`, 200)",
+      "action": "response.body.mock(\"json\", `{\"code\":\"00\",\"materialsList\":[{\"billMaterialsId\":\"0\",\"filePath\":\"h\",\"creativeType\":1}],\"advertParam\":{\"skipTime\":0.5},\"message\":\"无广告返回\"}`, 200)",
       "phase": "response",
-      "note": "抓包中启动位 placementNo=0007；用户实测 skipTime=1 有效后，试验性降为 0 秒；客户端可能钳制到约 1 秒",
+      "note": "抓包中启动位 placementNo=0007；skipTime=0 与 1 表现接近，现试验小数 0.5；客户端若要求整数可能触发约 1 秒兜底",
       "source": "用户提供的 12306 冷启动抓包（2026-11-08）"
     },
     {

@@ -6,7 +6,7 @@
 #!system=iOS,iPadOS
 #!system_version=15
 #!loon_version=3.5.1(998)
-#!date=2026-11-08 20:17
+#!date=2026-11-08 20:18
 
 [Argument]
 app_12306 = switch,true,tag=12306
@@ -36,8 +36,8 @@ DOMAIN,h-adashx.ut.taobao.com,REJECT
 [Rewrite]
 
 # 12306
-# 试验：启动位返回无广告成功结构并把跳过时间降为 0 秒；若客户端兜底则可能仍停留约 1 秒
-response if ${app_12306} == true && ${url} ~= /^https:\/\/ad\.12306\.cn\/ad\/ser\/getAdList(?:\?|$)/i then response.body.mock("json", `{"code":"00","materialsList":[{"billMaterialsId":"0","filePath":"h","creativeType":1}],"advertParam":{"skipTime":0},"message":"无广告返回"}`, 200)
+# 试验：启动位返回无广告成功结构并把跳过时间降为 0.5 秒；若字段要求整数会触发客户端兜底
+response if ${app_12306} == true && ${url} ~= /^https:\/\/ad\.12306\.cn\/ad\/ser\/getAdList(?:\?|$)/i then response.body.mock("json", `{"code":"00","materialsList":[{"billMaterialsId":"0","filePath":"h","creativeType":1}],"advertParam":{"skipTime":0.5},"message":"无广告返回"}`, 200)
 
 # 高德地图
 # 开屏：路径含 splash 的接口统一返回空 JSON，兼容无 query 与 _v2 变体
