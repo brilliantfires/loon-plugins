@@ -1,5 +1,5 @@
 {
-  "offline_assertions": 1074,
+  "offline_assertions": 1075,
   "rule_count": 73,
   "jq_count": 36,
   "status": "passed",
@@ -7,7 +7,8 @@
     "Coolapk_init": 1,
     "McDonalds_splash": 2,
     "JD_queryPagePopWindow": 1,
-    "Goofish_idleadv_scene_restore": 1
+    "Goofish_idleadv_scene_restore": 1,
+    "12306_getAdList": 3
   },
   "limitations": [
     "Not a Loon parser test",
