@@ -1,0 +1,21 @@
+#!name=X 去广告测试
+#!desc=实验版。只删除 X GraphQL 时间线中带 promoted-tweet 入口或 promotedMetadata 的广告节点；若 X 原生客户端启用证书固定，开启 MITM 后可能无法刷新，此时必须停用并删除本插件。
+#!author=Codex
+#!homepage=https://github.com/brilliantfires/loon-plugins
+#!tag=去广告
+#!system=iOS,iPadOS
+#!system_version=15
+#!loon_version=3.5.1(998)
+#!date=2026-11-08 22:22
+
+[Argument]
+enable = switch,true,tag=X 去广告
+
+[Rewrite]
+# 只按 X 明确推广入口与 promotedMetadata 过滤，包括数组项和对象型 entry；普通帖子、引用帖和分页游标保留。
+# X 有时在 API 证书固定后拒绝 MITM，规则能解析不代表原生 App 一定能联网。
+response if ${enable} == true && ${url} ~= /^https?:\/\/(?:api\.x\.com|api\.twitter\.com|x\.com)\/(?:i\/api\/)?graphql\/[^?]+\/(?:HomeTimeline|HomeLatestTimeline|SearchTimeline|TweetDetail|ListLatestTweetsTimeline|Bookmarks|NotificationsTimeline|ExploreTimeline|UserTweets|UserMedia|UserTweetsAndReplies)(?:\?|$)/i then response.json.jq(`if type=="object" then . as $original | try (def nonempty: . != null and . != false and . != "" and . != {} and . != []; def promoted: if type!="object" then false else ((.entryId? // .entry_id? // "") | if type=="string" then test("(^|-)promoted-(tweet|trend)-"; "i") else false end) or ([.promotedMetadata?, .promoted_metadata?, .content.promotedMetadata?, .content.promoted_metadata?, .content.itemContent.promotedMetadata?, .content.itemContent.promoted_metadata?, .content.itemContent.tweet_results.result.promotedMetadata?, .content.itemContent.tweet_results.result.promoted_metadata?, .itemContent.promotedMetadata?, .itemContent.promoted_metadata?, .itemContent.tweet_results.result.promotedMetadata?, .itemContent.tweet_results.result.promoted_metadata?, .item.itemContent.promotedMetadata?, .item.itemContent.promoted_metadata?, .item.itemContent.tweet_results.result.promotedMetadata?, .item.itemContent.tweet_results.result.promoted_metadata?, .entry.content.itemContent.promotedMetadata?, .entry.content.itemContent.promoted_metadata?, .entry.content.itemContent.tweet_results.result.promotedMetadata?, .entry.content.itemContent.tweet_results.result.promoted_metadata?] | any(nonempty)) end; def clean: if type=="array" then map(select((promoted|not)) | clean) elif type=="object" then if promoted then empty else with_entries(.value |= clean) end else . end; clean) catch $original else . end`)
+
+[MitM]
+# 开关关闭不会动态撤销静态 MITM；若开启后 X 无法刷新，请停用并删除整个实验插件。
+hostname = api.x.com, api.twitter.com, x.com

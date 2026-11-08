@@ -35,6 +35,17 @@ https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/lite/Splash-O
 https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/lite/InApp-Ads.lpx
 ```
 
+## X 去广告实验版
+
+X 原生 iOS 客户端的 GraphQL 接口可能启用证书固定。部分设备开启 MITM 后会拒绝刷新，因此 X 规则不并入日常使用的应用内聚合插件，而是作为独立实验：
+
+- 导入：https://brilliantfires.github.io/loon-plugins/lite/X-Ads-Test.lpx
+- 命中条件：GraphQL 时间线中带 `promoted-tweet-*` / `promoted-trend-*` 入口，或带 `promotedMetadata` / `promoted_metadata`
+- 保留内容：普通帖子、引用内容、分页游标
+- 已知限制：若开启后 X 无法刷新，说明该版本 API 的证书固定拒绝 Loon MITM。必须停用并删除实验插件，关闭开关无法撤销静态 MitM
+
+这个实验依据公开的 X 广告响应结构，尚未取得 X iOS 原生时间线 API 的真实抓包，也没有手机命中结果。
+
 
 ## 开关的重要限制
 
