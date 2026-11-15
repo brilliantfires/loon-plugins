@@ -13,9 +13,6 @@
     "NeteaseCloudMusic_home_vip_banner": 2,
     "NeteaseCloudMusic_vip_popup": 2
   },
-  "disabled_experiments": {
-    "X": "Native MITM plugin withdrawn after device behavior showed unloaded posts and ads remained"
-  },
   "limitations": [
     "Not a Loon parser test",
     "Not a real app network test",

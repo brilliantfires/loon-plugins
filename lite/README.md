@@ -1,4 +1,4 @@
-# Loon 去广告精简版 · 2026-11-08
+# Loon 去广告精简版 · 2026-11-15
 
 本次交付为两份独立 Loon 插件：`Splash-Only.lpx`（开屏广告）与 `InApp-Ads.lpx`（应用内广告）。开屏版仍是零 JavaScript；应用内版只有一个窄范围脚本，用于处理网易云无法用普通 JQ 修改的 AES/gzip 活动响应。两份插件均没有定时任务、远程 jq、媒体缓存或额外业务网络请求。原来的 27 个插件继续保留；精简版位于同一仓库的 `lite/` 目录，使用独立导入地址。
 
@@ -35,19 +35,19 @@ https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/lite/Splash-O
 https://raw.githubusercontent.com/brilliantfires/loon-plugins/main/lite/InApp-Ads.lpx
 ```
 
-## X 原生 App 去广告：已撤回
+## 开屏与应用内广告的边界
 
-2026-11-08 的原生 MITM 实验会让 X 出现“帖子暂时无法载入”，同时仍可能保留广告，因此已撤回。`X-Ads-Test.lpx` 现在的版本不含 Rewrite、Script 或 MitM，只用于提示停用；已经导入旧版的设备必须在 Loon 中删除整个插件，仅关闭插件内部开关不会撤销旧版静态 MitM。
+- **开屏/启动**：每次冷启动，或第一次进入 App 时只出现一次。包含传统开屏图/视频、启动后的营销模态弹窗、首页首次活动浮层。
+- **应用内**：进入后持续或重复出现。包含首页刷新、信息流、搜索、评论、详情页和播放过程中的贴片、横幅、悬浮广告。
+- **共享接口**：同一接口若同时下发两类内容，应按字段拆分。仅凭 URL 中出现 `popup` 或 `launch` 不能确定它只出现一次。
 
-当前没有可靠的 Loon 方案能同时满足“过滤 X 原生 App 推广帖”和“不破坏时间线加载”。X 原生 API 存在证书固定、私有 GraphQL 结构和客户端校验；V2EX 曾在 2025 年流传的 IPv6 地区绕法也已明确失效。
+应用内版目前统计出 10 个 App、11 条启动弹窗候选：4 个 App/5 条明确弹窗端点，2 个 App/2 条首页入口浮层，4 个 App/4 条无法只凭 URL 分类的通用广告端点。由于还没有冷启动、后台恢复和再次进入首页的对照真机抓包，当前不迁移。逐项表见 [AUDIT.md](./AUDIT.md)。
 
-可行的 iOS 路线是使用 Safari 的 X 网页版，并安装专门隐藏网页推广帖的 Safari 扩展。网页扩展可以直接处理页面结构，不需要 MITM 原生 API，也不会影响 Loon 对其他 App 的去广告。
+## X 原生 App：明确不支持
 
-1. App Store 安装免费的 [Sink It for Twitter/X](https://apps.apple.com/us/app/sink-it-for-twitter-x/id6464326394)。
-2. 在 iOS 设置中启用 Safari 扩展，并允许它访问 `x.com`。
-3. 用 Safari 打开 `https://x.com`，在扩展设置中开启“移除推广内容”；可以再从分享菜单添加到主屏幕。
+X 原生 iOS App 已从本仓库的 Loon 方案中移除。历史 GraphQL 过滤在真机上会造成帖子无法载入，同时广告仍可能出现；打开内部开关也不能撤销静态 MitM。已经导入过历史实验插件的设备，应直接在 Loon 中删除整个插件。
 
-如果必须使用原生 X App，目前只有官方付费档能减少部分广告：Premium+ 可让时间线的推广帖消失，但主页、回复、Explore 等位置仍可能显示广告。X 设置里的“关闭个性化广告”只影响定向，不会让广告消失。来源：[X Premium FAQ](https://help.x.com/en/using-x/x-premium-faq)。
+原生 App 不再提供 Loon 去广告方案；只建议使用 Safari 的 X 网页版和可隐藏网页推广内容的 Safari 扩展。完整失败记录、约束和替代路线见 [维护指南](../AGENTS.md)。
 
 ## 开关的重要限制
 

@@ -7,19 +7,18 @@
 | 使用方 | 导入什么 | 说明 |
 | --- | --- | --- |
 | 手机（唯一真实用户） | 只导入 `lite/Splash-Only.lpx` 与 `lite/InApp-Ads.lpx` | 其它 `plugins/*.lpx` 不参与日常使用 |
-| 已停用 | `lite/X-Ads-Test.lpx` | 无 Rewrite、Script 或 MitM 的撤回提示；X 原生 App 无法可靠通过 Loon 安全过滤 |
 | 仓库读者 | 全部文件 | 完整版 27 个插件 + `scripts/` 远程脚本 |
 
 推论：
 
-- **日常规则改动默认落在 `lite/` 两份聚合插件里**；X 这类证书固定或响应结构高风险的 App 不加入 MITM 聚合，只在 `plugins/` 里改，用户手机看不到效果。
+- **日常规则改动默认落在 `lite/` 两份聚合插件里**；证书固定或响应结构高风险且会破坏 App 正常功能的来源不纳入 Loon。
 - `plugins/` 与多数 `scripts/` 是历史资产，不要为了“保持一致”顺手大改；确需同步时说明理由。
 - `scripts/*.js|*.jq` 是**运行时从 Pages 拉取**的资源，不是本地依赖；删了会导致对应完整版插件失效。精简版当前只引用 `NeteaseCloudMusicAdOnly.js`。
 
 ## 二、目录
 
 ```
-lite/          两份日常插件、一个 X 停用提示文件及其文档、清单、校验和
+lite/          两份日常插件及其文档、清单、校验和
 plugins/       27 个完整版插件（部分依赖 scripts/）
 scripts/       远程脚本资源；精简版只引用网易云活动广告窄脚本
 docs/          审计文档与历史 App 说明
@@ -36,18 +35,18 @@ AGENTS.md      本文件
 1. **改规则**（`lite/Splash-Only.lpx` 或 `lite/InApp-Ads.lpx`）。
 2. **同步 `#!date`，格式 `YYYY-MM-DD HH:MM`**。Loon 插件详情页原样显示该字段（官方文档：“该值会按原样显示”，不做解析），带时分才能区分同一天内的多次改动；只写日期会让用户以为没更新（真实发生过）。
 3. **同步 `lite/manifest.json`**：新增/修改的规则要有一条对应记录（`mode`/`app`/`hosts`/`pattern`/`action`/`phase`/`note`/`source`）。域名规则用 `mode: "rule"`、`phase: "dns"`。
-4. **重新生成校验和**（`lite/SHA256SUMS` 覆盖 10 个文件）：
+4. **重新生成校验和**（`lite/SHA256SUMS` 覆盖 9 个文件）：
    ```bash
-   cd lite && shasum -a 256 Splash-Only.lpx InApp-Ads.lpx X-Ads-Test.lpx README.md AUDIT.md \
+   cd lite && shasum -a 256 Splash-Only.lpx InApp-Ads.lpx README.md AUDIT.md \
      manifest.json inventory.json verification.json NOTICE.md LICENSE-Bilibili-GPL-3.0.txt > SHA256SUMS
-   shasum -a 256 -c SHA256SUMS | grep -c ': OK'   # 应为 10
+   shasum -a 256 -c SHA256SUMS | grep -c ': OK'   # 应为 9
    ```
 5. **本地校验**（见第五节的脚本），确认开关无未定义、无重复规则、MitM 覆盖所有 URL 主机。
 6. **若改动 `scripts/NeteaseCloudMusicAdOnly.js`**：运行 `node --check`，用用户抓包做加解密/保留内容回放，并更新 `manifest.json` 里的脚本 SHA-256。
 7. **提交并推送**到 `main`。
 8. **确认线上状态**。看一次即可，不要轮询（见第十三节）；线上还是旧版本属正常，不代表失败。
 
-`lite/X-Ads-Test.lpx` 是已撤回实验的占位文件，必须保持零 Rewrite、零 Script、零 MitM。X 原生 iOS 客户端不适合由 Loon 过滤：启用 MITM 会破坏时间线加载，而关闭内部开关不会撤销静态 MitM。需要 X 去广告时只建议使用 Safari 网页版扩展，不能重新把 X 主机加入日常聚合插件。
+X 原生 iOS App 已明确排除在 Loon 方案之外。失败记录与替代路线见第十四节。
 
 ## 四、GitHub Pages 有延迟，但只需要看一次
 
@@ -198,3 +197,27 @@ else . end
 | `#!date`、注释、文档、README | 无 |
 | 推送之后 | 最多一次 `curl` 看一眼，或直接交给用户手机上验证 |
 | 不确定是否覆盖真机场景 | 说明边界，让用户实测，不要自己编造结论 |
+
+## 十四、X 原生 App：禁入与替代路线
+
+### 硬规则
+
+- 不创建 X 插件，不把 `x.com`、`api.x.com`、`api.twitter.com` 或其他 X/Twitter 主机加入任何日常聚合插件的 `[MitM]`。
+- 不保留“零规则占位插件”。占位文件会诱导再次导入，也会留下旧版 MitM 已安装但当前看似无害的歧义。
+- 已经导入过历史 X 实验插件的设备，必须从 Loon 删除整个插件。关闭插件内部开关不会撤销静态 MitM。
+- X 原生 App 的去广告不在 Loon 的能力边界内；仓库不再维护相关 Rewrite、JQ、脚本或实验分支。
+
+### 已尝试和失败依据
+
+1. **原生 GraphQL 响应过滤**：历史实验匹配 X 的 `HomeTimeline`、`SearchTimeline`、`TweetDetail` 等接口，递归删除带 `promoted-tweet`、`promoted-trend`、`promotedMetadata` 或 `promoted_metadata` 的节点。
+2. **离线回放**：合成时间线测试可以删除推广节点，同时保留普通帖子、引用帖和分页游标；这只证明 JQ 结构处理正确，不能证明原生客户端接受改写后的响应。
+3. **iOS 真机结果**：2026-11-08 启用后出现“帖子暂时无法载入”，而推广内容仍可能出现。正常时间线与去广告无法同时保证，因此已撤回。
+4. **证书与客户端校验**：X 原生 API 存在证书固定、私有 GraphQL 结构和客户端校验风险。能解码一次响应不等于后续请求会接受伪造证书或改写正文。
+5. **IPv6 地区绕法**：V2EX 曾在 2025 年流传通过 IPv6 地区绕开广告的方法，但该路径已经失效，不能作为可维护方案。
+6. **关闭开关不够**：聚合插件中的 `hostname` 是静态的；即使所有 Rewrite 开关关闭，Loon 仍可能对 X 主机执行 TLS 解密。因此失败回退必须删除整个插件，而不是只关开关。
+
+### 当前结论
+
+- 原生 X App：不支持通过 Loon 去广告。
+- 可用替代：Safari 打开 `x.com`，使用能隐藏网页推广内容的 Safari 扩展；可将网页添加到主屏幕。
+- 如果坚持使用原生 X App，只能依赖 X 官方提供的广告方案或后续产品变化。不要再以抓取公开 GraphQL 结构为由恢复实验插件。

@@ -1,5 +1,52 @@
 {
-  "date": "2026-11-08",
+  "date": "2026-11-15",
+  "category_review": {
+    "definitions": {
+      "splash": "每次冷启动，或第一次进入某个 App 时只出现一次的图片、视频、模态弹窗或首次活动浮层",
+      "inapp": "进入 App 后，在首页刷新、信息流、搜索、评论、详情页、播放过程或页面切换中持续或重复出现的贴片、信息流、横幅和悬浮广告"
+    },
+    "startup_popup_candidates": {
+      "explicit_popup": {
+        "app_count": 4,
+        "rule_count": 5,
+        "apps": [
+          "McDonalds",
+          "Taopiaopiao",
+          "Zhuanzhuan",
+          "NeteaseCloudMusic"
+        ],
+        "status": "接口明确用于弹窗，但尚未证明只在启动或首次进入时出现"
+      },
+      "entry_overlay": {
+        "app_count": 2,
+        "rule_count": 2,
+        "apps": [
+          "Xiaoxiang",
+          "Zhihu"
+        ],
+        "status": "可能为进入首页后的首次浮层，也可能随页面持续下发"
+      },
+      "generic_unclassified": {
+        "app_count": 4,
+        "rule_count": 4,
+        "apps": [
+          "BaiduNetdisk",
+          "Dewu",
+          "LuckinCoffee",
+          "SFExpress"
+        ],
+        "status": "通用广告接口可能混合开屏与常驻广告，无法只凭 URL 分类"
+      }
+    },
+    "excluded_without_trigger_evidence": [
+      "Taopiaopiao floatingBanner",
+      "Bilibili PGC activity popup",
+      "12306 activityBanner",
+      "Cainiao login-related ad path"
+    ],
+    "evidence": "静态端点语义审计；没有冷启动、后台恢复和再次进入首页的对照真机抓包",
+    "move_gate": "确认响应只承载广告、触发频率为每次启动或首次进入一次，并验证迁移后不会把常驻广告带入开屏版"
+  },
   "summary": {
     "splash": {
       "apps": [
@@ -432,7 +479,7 @@
       "pattern": "/^https:\\/\\/pan\\.baidu\\.com\\/rest\\/\\d\\.\\d\\/pcs\\/adv\\?/i",
       "action": "reject_dict(200)",
       "phase": "request",
-      "note": "仅广告接口；恢复 getconfig/getsyscfg 和页面入口",
+      "note": "通用广告接口；可能混合开屏与常驻广告，触发场景未分类，暂留应用内版",
       "source": "plugins/BaiduNetdisk.lpx"
     },
     {
@@ -533,42 +580,6 @@
     },
     {
       "mode": "inapp",
-      "app": "Cainiao",
-      "hosts": [
-        "netflow-mtop.cainiao.com"
-      ],
-      "pattern": "/^https:\\/\\/netflow-mtop\\.cainiao\\.com\\/gw\\/mtop\\.cainiao\\.guoguo\\.nbnetflow\\.ads\\.index/i",
-      "action": "reject(404)",
-      "phase": "request",
-      "note": "仅独立广告接口；不改每日现金任务、会员或首页推荐",
-      "source": "plugins/Cainiao.lpx"
-    },
-    {
-      "mode": "inapp",
-      "app": "Cainiao",
-      "hosts": [
-        "cn-acs.m.cainiao.com"
-      ],
-      "pattern": "/^https:\\/\\/cn-acs\\.m\\.cainiao\\.com\\/gw\\/mtop\\.cainiao\\.adkeyword\\.get\\.cn/i",
-      "action": "reject(404)",
-      "phase": "request",
-      "note": "仅独立广告接口；不改每日现金任务、会员或首页推荐",
-      "source": "plugins/Cainiao.lpx"
-    },
-    {
-      "mode": "inapp",
-      "app": "Cainiao",
-      "hosts": [
-        "cn-acs.m.cainiao.com"
-      ],
-      "pattern": "/^https:\\/\\/cn-acs\\.m\\.cainiao\\.com\\/gw\\/mtop\\.cainiao\\.guoguo\\.nbnetflow\\.ads\\.m?show/i",
-      "action": "reject(404)",
-      "phase": "request",
-      "note": "仅独立广告接口；不改每日现金任务、会员或首页推荐",
-      "source": "plugins/Cainiao.lpx"
-    },
-    {
-      "mode": "inapp",
       "app": "Coolapk",
       "hosts": [
         "api.coolapk.com"
@@ -600,7 +611,7 @@
       "pattern": "/^https:\\/\\/app\\.dewu\\.com\\/api\\/v1\\/app\\/advertisement\\//i",
       "action": "reject_dict(200)",
       "phase": "request",
-      "note": "广告接口可能兼含开屏；不虚称为独立开屏接口",
+      "note": "通用广告接口；可能兼含开屏，无法只凭 URL 分类，暂留应用内版",
       "source": "plugins/Dewu.lpx"
     },
     {
@@ -708,7 +719,7 @@
       "pattern": "/^https:\\/\\/capi\\.lkcoffee\\.com\\/resource\\/m\\/sys\\/app\\/adposNew/i",
       "action": "reject(404)",
       "phase": "request",
-      "note": "仅广告位接口；恢复公共模块、礼品卡与成长日历",
+      "note": "通用广告位接口；可能混合开屏与常驻广告，触发场景未分类，暂留应用内版",
       "source": "plugins/LuckinCoffee.lpx"
     },
     {
@@ -720,7 +731,7 @@
       "pattern": "/^https:\\/\\/api\\.mcd\\.cn\\/bff\\/portal\\/richpop\\/v2(?:\\?|$)/i",
       "action": "response.json.jq(`if type==\"object\" then . as $original | try (del(.data.pop)) catch $original else . end`)",
       "phase": "response",
-      "note": "仅推广弹窗",
+      "note": "明确推广弹窗；是否只在启动或首次进入出现仍未验证，属于开屏候选",
       "source": "plugins/McDonalds.lpx"
     },
     {
@@ -744,7 +755,7 @@
       "pattern": "/^https?:\\/\\/interface\\d?\\.music\\.163\\.com\\/eapi\\/link\\/(?:page\\/rcmd\\/resource\\/show|scene\\/show\\/resource)(?:\\?|$)/i",
       "action": "script(NeteaseCloudMusicAdOnly.js)",
       "phase": "response",
-      "note": "只处理首页明确 VIP 推广横幅与 homeMidPopUp global_popup；保留普通首页块、徽章与二级楼层",
+      "note": "处理首页 VIP 推广横幅与 homeMidPopUp global_popup；弹窗是否只在首次进入出现未验证，属于开屏候选",
       "source": "lite/InApp-Ads.lpx"
     },
     {
@@ -768,7 +779,7 @@
       "pattern": "/^https:\\/\\/ccsp-egmas\\.sf-express\\.com\\/cx-app-base\\/base\\/app\\/ad\\//i",
       "action": "reject_dict(200)",
       "phase": "request",
-      "note": "仅广告接口；恢复积分商城及首页模块",
+      "note": "通用广告接口；可能混合开屏与常驻广告，触发场景未分类，暂留应用内版",
       "source": "plugins/SFExpress.lpx"
     },
     {
@@ -780,7 +791,7 @@
       "pattern": "/^https:\\/\\/acs\\.m\\.taobao\\.com\\/gw\\/mtop\\.film\\.life\\.popup\\.get\\//i",
       "action": "reject_dict(200)",
       "phase": "request",
-      "note": "推广弹窗",
+      "note": "明确推广弹窗；是否只在启动或首次进入出现仍未验证，属于开屏候选",
       "source": "plugins/Taopiaopiao.lpx"
     },
     {
@@ -902,7 +913,7 @@
       "pattern": "/^https:\\/\\/mall\\.meituan\\.com\\/api\\/c\\/homepage\\/bubble\\/operate\\/info/i",
       "action": "reject_dict(200)",
       "phase": "request",
-      "note": "只保留广告横幅和浮层；不拦订单/个人页推荐",
+      "note": "首页浮层；可能是首次进入提示，也可能持续下发，属于开屏候选",
       "source": "plugins/Xiaoxiang.lpx"
     },
     {
@@ -974,7 +985,7 @@
       "pattern": "/^https:\\/\\/api\\.zhihu\\.com\\/commercial_api\\/(?:app_float_layer|launch_v2)(?:\\?|$)/",
       "action": "response.json.jq(`if type==\"object\" then . as $original | try (reduce [\"app_float_video\",\"float_layer\",\"search_middle_page\"][] as $k (.; if has($k) then .[$k] |= (if type==\"string\" then . as $original | try (fromjson | .ads=[] | tojson) catch $original elif type==\"object\" then .ads=[] else . end) else . end)) catch $original else . end`)",
       "phase": "response",
-      "note": "只处理应用内三个广告字段，不改 launch",
+      "note": "处理应用浮层与搜索中间页广告，不改 launch；启动触发次数未验证，属于开屏候选",
       "source": "plugins/Zhihu.lpx"
     },
     {
@@ -986,7 +997,7 @@
       "pattern": "/^https:\\/\\/app\\.zhuanzhuan\\.com\\/zzopen\\/popwindow\\/getallpopwin(?:\\?|$)/i",
       "action": "reject_dict(200)",
       "phase": "request",
-      "note": "只保留推广弹窗，不改商品推荐和我的页面",
+      "note": "明确推广弹窗；是否只在启动或首次进入出现仍未验证，属于开屏候选",
       "source": "plugins/Zhuanzhuan.lpx"
     },
     {
@@ -998,7 +1009,7 @@
       "pattern": "/^https:\\/\\/app\\.zhuanzhuan\\.com\\/zzopen\\/zzbmlogic\\/queryFrontPageWindowInfo(?:\\?|$)/i",
       "action": "reject_dict(200)",
       "phase": "request",
-      "note": "只保留推广弹窗，不改商品推荐和我的页面",
+      "note": "首页窗口信息可能是首次进入弹窗，是否重复出现未验证，属于开屏候选",
       "source": "plugins/Zhuanzhuan.lpx"
     },
     {
@@ -1051,7 +1062,7 @@
     },
     {
       "mode": "inapp",
-      "app": "知乎",
+      "app": "Zhihu",
       "hosts": [
         "api.zhihu.com"
       ],
@@ -1063,7 +1074,7 @@
     },
     {
       "mode": "inapp",
-      "app": "菜鸟",
+      "app": "Cainiao",
       "hosts": [
         "guide-acs.m.taobao.com"
       ],
@@ -1075,7 +1086,7 @@
     },
     {
       "mode": "inapp",
-      "app": "菜鸟",
+      "app": "Cainiao",
       "hosts": [
         "netflow-mtop.cainiao.com"
       ],
@@ -1087,7 +1098,7 @@
     },
     {
       "mode": "inapp",
-      "app": "菜鸟",
+      "app": "Cainiao",
       "hosts": [
         "netflow-mtop.cainiao.com"
       ],
@@ -1099,7 +1110,7 @@
     },
     {
       "mode": "inapp",
-      "app": "菜鸟",
+      "app": "Cainiao",
       "hosts": [
         "cn-acs.m.cainiao.com"
       ],
@@ -1127,8 +1138,7 @@
   "unsupported_inapp": {
     "Taobao": "现有 JS 是开屏和通用活动模板，跨 App 的拦截不纳入淘宝内部去广告",
     "JD-Takeout": "现有规则以推荐、钱包、页面入口删除为主，缺少明确广告判据",
-    "YouTube": "需要 Protobuf 脚本及视频域名解密；本轮以零 JS 原生版为基线，不纳入。需要时单独启用原 YouTube 插件并测量开销。",
-    "X": "原生 MITM 实验已撤回；启用后会破坏时间线加载且广告仍可能出现。X-Ads-Test.lpx 现为零规则停用提示"
+    "YouTube": "需要 Protobuf 脚本及视频域名解密；本轮以零 JS 原生版为基线，不纳入。需要时单独启用原 YouTube 插件并测量开销。"
   },
   "source_sha256": {
     "plugins/12306.lpx": "3d51c94f59fc390a8b23374e1d61d66a49ef06c727e5215384df8ef572a1eeb2",

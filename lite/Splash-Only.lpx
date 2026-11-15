@@ -1,12 +1,16 @@
 #!name=开屏广告
-#!desc=仅处理明确开屏入口；不保证覆盖所有 App 的所有开屏。无 JS、无定时任务、无外部资源。含阿里妈妈广告链路静态域名拦截，不受 App 开关控制。关闭开关不移除静态 MitM 域名；不用时停用整个插件。
+#!desc=处理已明确识别为每次冷启动或首次进入时出现一次的开屏、启动弹窗与首页首次活动浮层；不处理浏览中反复出现的贴片、信息流、搜索和横幅。覆盖仍不完整。无 JS、无定时任务、无外部资源。含阿里妈妈静态域名拦截，不受 App 开关控制；关闭开关不移除静态 MitM 域名。
 #!author=原规则：可莉、RuCu6、fmz200、zmqcherish、Sliverkiss、kokoryh、Keywos、app2smile；精简整理：Codex
 #!homepage=https://github.com/brilliantfires/loon-plugins
 #!tag=去广告
 #!system=iOS,iPadOS
 #!system_version=15
 #!loon_version=3.5.1(998)
-#!date=2026-11-08 20:20
+#!date=2026-11-15 14:05
+
+# 分类口径：这里只接收已确认“每次启动/首次进入出现一次”的广告。
+# 持续出现在首页刷新、信息流、搜索或评论中的广告应归入 InApp-Ads.lpx。
+# 同一接口同时服务开屏和应用内广告时，先按字段拆分；无法证明时不要挪入本文件。
 
 [Argument]
 app_12306 = switch,true,tag=12306
