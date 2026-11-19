@@ -6,7 +6,7 @@
 #!system=iOS,iPadOS
 #!system_version=15
 #!loon_version=3.5.1(998)
-#!date=2026-11-15 14:05
+#!date=2026-11-19 21:15
 
 # 分类口径：持续出现在首页刷新、信息流、搜索、评论、详情页或播放中的广告属于应用内广告。
 # 每次冷启动/首次进入只出现一次的模态弹窗应归入 Splash-Only.lpx。
@@ -25,7 +25,6 @@ app_Douban = switch,false,tag=豆瓣,desc=沿用原插件限制仅适用兼容�
 app_Goofish = switch,false,tag=闲鱼
 app_JD = switch,false,tag=京东
 app_LuckinCoffee = switch,false,tag=瑞幸咖啡
-app_McDonalds = switch,false,tag=麦当劳
 app_NeteaseCloudMusic = switch,false,tag=网易云音乐
 app_Pinduoduo = switch,false,tag=拼多多
 app_SFExpress = switch,false,tag=顺丰速运
@@ -120,10 +119,6 @@ response if ${app_JD} == true && ${url} ~= /^https:\/\/api\.m\.jd\.com\/client\.
 # 仅广告位接口；恢复公共模块、礼品卡与成长日历
 request if ${app_LuckinCoffee} == true && ${url} ~= /^https:\/\/capi\.lkcoffee\.com\/resource\/m\/sys\/app\/adposNew/i then reject(404)
 
-# 麦当劳
-# 明确推广弹窗；是否只在启动/首次进入出现仍待真机确认
-response if ${app_McDonalds} == true && ${url} ~= /^https:\/\/api\.mcd\.cn\/bff\/portal\/richpop\/v2(?:\?|$)/i then response.json.jq(`if type=="object" then . as $original | try (del(.data.pop)) catch $original else . end`)
-
 # 网易云音乐
 # 仅独立广告响应；移除 AES/gzip 脚本及页面白名单
 response if ${app_NeteaseCloudMusic} == true && ${url} ~= /^https?:\/\/interface\d?\.music\.163\.com\/e?api\/(ocpc\/)?ad\//i then response.body.mock("text", "")
@@ -197,4 +192,4 @@ request if ${app_Zhuanzhuan} == true && ${url} ~= /^https:\/\/app\.zhuanzhuan\.c
 
 [MitM]
 # 静态名单。开关仅关闭复写，不动态撤销 TLS 解密。
-hostname = acs.m.goofish.com, acs.m.taobao.com, api.bilibili.com, api.coolapk.com, api.live.bilibili.com, api.m.jd.com, api.mcd.cn, api.pinduoduo.com, api.weibo.cn, api.zhihu.com, app.bilibili.com, app.dewu.com, app.zhuanzhuan.com, capi.lkcoffee.com, card.weibo.com, ccsp-egmas.sf-express.com, cn-acs.m.cainiao.com, edith.xiaohongshu.com, frodo.douban.com, g-acs.m.goofish.com, interface*.music.163.com, line3-h5-mobile-api.biligame.com, m5-zb.amap.com, m5.amap.com, mall.meituan.com, mobile.12306.cn, mp.weixin.qq.com, netflow-mtop.cainiao.com, pan.baidu.com, portal-portm.meituan.com, rec.xiaohongshu.com, res.xiaojukeji.com, tiebac.baidu.com, weibo.com, www.xiaohongshu.com, guide-acs.m.taobao.com
+hostname = acs.m.goofish.com, acs.m.taobao.com, api.bilibili.com, api.coolapk.com, api.live.bilibili.com, api.m.jd.com, api.pinduoduo.com, api.weibo.cn, api.zhihu.com, app.bilibili.com, app.dewu.com, app.zhuanzhuan.com, capi.lkcoffee.com, card.weibo.com, ccsp-egmas.sf-express.com, cn-acs.m.cainiao.com, edith.xiaohongshu.com, frodo.douban.com, g-acs.m.goofish.com, interface*.music.163.com, line3-h5-mobile-api.biligame.com, m5-zb.amap.com, m5.amap.com, mall.meituan.com, mobile.12306.cn, mp.weixin.qq.com, netflow-mtop.cainiao.com, pan.baidu.com, portal-portm.meituan.com, rec.xiaohongshu.com, res.xiaojukeji.com, tiebac.baidu.com, weibo.com, www.xiaohongshu.com, guide-acs.m.taobao.com

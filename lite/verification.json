@@ -1,10 +1,13 @@
 {
-  "offline_assertions": 1098,
-  "rule_count": 77,
-  "jq_count": 37,
+  "offline_assertions": 1133,
+  "rule_count": 79,
+  "jq_count": 42,
   "script_count": 1,
   "status": "passed",
   "private_capture_responses": {
+    "Tieba_getSplashAd": 1,
+    "Taobao_elastic_schedule_pop": 1,
+    "McDonalds_richpop_v2": 1,
     "Coolapk_init": 1,
     "McDonalds_splash": 2,
     "JD_queryPagePopWindow": 1,
@@ -16,6 +19,23 @@
     "Ctrip_tripAds_feed": 1
   },
   "targeted_capture_checks": {
+    "Taobao_elastic_schedule": {
+      "pop_before": 2,
+      "pop_after": 0,
+      "non_pop_semantics": "unchanged",
+      "scope": "Saved response replay only; real-device behavior is not verified"
+    },
+    "McDonalds_richpop_v2": {
+      "pop_before": 1,
+      "pop_after": 0,
+      "metadata_semantics": "unchanged",
+      "scope": "Saved response replay only; real-device behavior is not verified"
+    },
+    "Tieba_getSplashAd": {
+      "exact_url_cases": 3,
+      "similar_path_cases_excluded": 4,
+      "scope": "Regex replay only; real-device behavior is not verified"
+    },
     "Ctrip_tripAds": {
       "splash_candidates": 4,
       "visible_before": 1,

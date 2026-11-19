@@ -7,10 +7,9 @@
     },
     "startup_popup_candidates": {
       "explicit_popup": {
-        "app_count": 4,
-        "rule_count": 5,
+        "app_count": 3,
+        "rule_count": 4,
         "apps": [
-          "McDonalds",
           "Taopiaopiao",
           "Zhuanzhuan",
           "NeteaseCloudMusic"
@@ -44,7 +43,7 @@
       "12306 activityBanner",
       "Cainiao login-related ad path"
     ],
-    "evidence": "静态端点语义审计；没有冷启动、后台恢复和再次进入首页的对照真机抓包",
+    "evidence": "静态端点语义审计；麦当劳、淘宝与贴吧已凭冷启动抓包迁入开屏版，剩余候选仍缺后台恢复和再次进入首页的对照",
     "move_gate": "确认响应只承载广告、触发频率为每次启动或首次进入一次，并验证迁移后不会把常驻广告带入开屏版"
   },
   "summary": {
@@ -69,6 +68,7 @@
       ],
       "hosts": [
         "acs.m.goofish.com",
+        "acs.m.taobao.com",
         "ad.12306.cn",
         "api.coolapk.com",
         "api.douban.com",
@@ -88,7 +88,7 @@
         "tiebac.baidu.com",
         "wbapp.uve.weibo.com"
       ],
-      "rules": 24,
+      "rules": 27,
       "scripts": 0
     },
     "inapp": {
@@ -105,7 +105,6 @@
         "Goofish",
         "JD",
         "LuckinCoffee",
-        "McDonalds",
         "NeteaseCloudMusic",
         "Pinduoduo",
         "SFExpress",
@@ -125,7 +124,6 @@
         "api.coolapk.com",
         "api.live.bilibili.com",
         "api.m.jd.com",
-        "api.mcd.cn",
         "api.pinduoduo.com",
         "api.weibo.cn",
         "api.zhihu.com",
@@ -139,6 +137,7 @@
         "edith.xiaohongshu.com",
         "frodo.douban.com",
         "g-acs.m.goofish.com",
+        "guide-acs.m.taobao.com",
         "interface*.music.163.com",
         "line3-h5-mobile-api.biligame.com",
         "m5-zb.amap.com",
@@ -155,7 +154,7 @@
         "weibo.com",
         "www.xiaohongshu.com"
       ],
-      "rules": 53,
+      "rules": 52,
       "scripts": 1
     }
   },
@@ -330,6 +329,18 @@
     },
     {
       "mode": "splash",
+      "app": "McDonalds",
+      "hosts": [
+        "api.mcd.cn"
+      ],
+      "pattern": "/^https:\\/\\/api\\.mcd\\.cn\\/bff\\/portal\\/richpop\\/v2(?:\\?|$)/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (del(.data.pop)) catch $original else . end`)",
+      "phase": "response",
+      "note": "冷启动抓包中开屏请求之后约 44ms 下发推广弹层；只删除 data.pop",
+      "source": "用户提供的麦当劳冷启动抓包（2026-11-19）"
+    },
+    {
+      "mode": "splash",
       "app": "Taobao",
       "hosts": [
         "guide-acs.m.taobao.com"
@@ -342,6 +353,18 @@
     },
     {
       "mode": "splash",
+      "app": "Taobao",
+      "hosts": [
+        "acs.m.taobao.com"
+      ],
+      "pattern": "/^https:\\/\\/acs\\.m\\.taobao\\.com\\/gw\\/mtop\\.alibaba\\.mobile\\.elastic\\.schedule\\/1\\.0\\/(?:\\?|$)/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.data.abilityContent.preload.strategies|type)==\"array\" then .data.abilityContent.preload.strategies |= map(select((.type? // \"\") != \"pop\")) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "启动弹层配置；同一接口还下发 dx 等普通预加载，只过滤 type=pop",
+      "source": "用户提供的淘宝冷启动抓包（2026-11-19）"
+    },
+    {
+      "mode": "splash",
       "app": "Tieba",
       "hosts": [
         "tiebac.baidu.com"
@@ -351,6 +374,18 @@
       "phase": "response",
       "note": "仅已知 home_screen_ad 字段；不保证覆盖其他 SDK 开屏",
       "source": "plugins/Tieba.lpx"
+    },
+    {
+      "mode": "splash",
+      "app": "Tieba",
+      "hosts": [
+        "tiebac.baidu.com"
+      ],
+      "pattern": "/^https?:\\/\\/tiebac\\.baidu\\.com\\/c\\/f\\/ad\\/getSplashAd(?:\\?|$)/i",
+      "action": "reject_dict(200)",
+      "phase": "request",
+      "note": "独立开屏接口；只匹配精确路径，不影响 getFeedAd 等其他广告链路",
+      "source": "用户提供的贴吧冷启动抓包（2026-11-19）"
     },
     {
       "mode": "splash",
@@ -735,18 +770,6 @@
       "phase": "request",
       "note": "通用广告位接口；可能混合开屏与常驻广告，触发场景未分类，暂留应用内版",
       "source": "plugins/LuckinCoffee.lpx"
-    },
-    {
-      "mode": "inapp",
-      "app": "McDonalds",
-      "hosts": [
-        "api.mcd.cn"
-      ],
-      "pattern": "/^https:\\/\\/api\\.mcd\\.cn\\/bff\\/portal\\/richpop\\/v2(?:\\?|$)/i",
-      "action": "response.json.jq(`if type==\"object\" then . as $original | try (del(.data.pop)) catch $original else . end`)",
-      "phase": "response",
-      "note": "明确推广弹窗；是否只在启动或首次进入出现仍未验证，属于开屏候选",
-      "source": "plugins/McDonalds.lpx"
     },
     {
       "mode": "inapp",

@@ -6,7 +6,7 @@
 #!system=iOS,iPadOS
 #!system_version=15
 #!loon_version=3.5.1(998)
-#!date=2026-11-19 20:51
+#!date=2026-11-19 21:15
 
 # 分类口径：这里只接收已确认“每次启动/首次进入出现一次”的广告。
 # 持续出现在首页刷新、信息流、搜索或评论中的广告应归入 InApp-Ads.lpx。
@@ -85,14 +85,20 @@ response if ${app_JD} == true && ${url} ~= /^https:\/\/api\.m\.jd\.com\/client\.
 # 麦当劳
 # 沿用开屏投放过期方案
 response if ${app_McDonalds} == true && ${url} ~= /^https:\/\/api\.mcd\.cn\/bff\/portal\/home\/splash(?:\?|$)/i then response.json.jq(`if type=="object" then . as $original | try (if (.data.list | type) == "array" then .data.list |= map(.countDown=0 | .beginTime="2000-01-01 00:00:00" | .endTime="2000-01-01 00:00:00" | if (.showTimeList | type) == "array" then .showTimeList |= map(.beginDate="2000-01-01" | .endDate="2000-01-01") else . end) else . end) catch $original else . end`)
+# 冷启动抓包中开屏请求之后约 44ms 下发 richpop 推广弹层；只删除 .data.pop
+response if ${app_McDonalds} == true && ${url} ~= /^https:\/\/api\.mcd\.cn\/bff\/portal\/richpop\/v2(?:\?|$)/i then response.json.jq(`if type=="object" then . as $original | try (del(.data.pop)) catch $original else . end`)
 
 # 淘宝
 # 从原 JS 迁移开屏配置分支；不拦截普通视频或通用活动模板
 response if ${app_Taobao} == true && ${url} ~= /^https:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.taobao\.wireless\.home\.splash\.awesome\.get(?:\/|\?|$)/i then response.json.jq(`if type=="object" then . as $original | try (if (.data.containers.splash_home_base.base.sections|type)=="array" then (.data.containers.splash_home_base.base.sections[] | select(type=="object") | .bizData["taobao-splash"].data | select(type=="array")) |= map(if type=="object" then . + {waitTime:"0",times:"0",hotStart:"false",haveVoice:"false",hideTBLogo:"false",enable4G:"false",coldStart:"false",startTime:"3818332800000",endTime:"3818419199000",gmtStart:"2090-12-31 00:00:00",gmtEnd:"2090-12-31 23:59:59",gmtStartMs:"3818332800000",gmtEndMs:"3818419199000"} | (if .imgUrl then .imgUrl="" else . end) | (if .videoUrl then .videoUrl="" else . end) else . end) else . end) catch $original else . end`)
+# elastic.schedule 同一接口还会下发 dx 等普通预加载；只移除启动弹层 type=pop
+response if ${app_Taobao} == true && ${url} ~= /^https:\/\/acs\.m\.taobao\.com\/gw\/mtop\.alibaba\.mobile\.elastic\.schedule\/1\.0\/(?:\?|$)/i then response.json.jq(`if type=="object" then . as $original | try (if (.data.abilityContent.preload.strategies|type)=="array" then .data.abilityContent.preload.strategies |= map(select((.type? // "") != "pop")) else . end) catch $original else . end`)
 
 # 百度贴吧
-# 仅已知 home_screen_ad 字段；不保证覆盖其他 SDK 开屏
+# 启动同步响应中清除 home_screen_ad；独立开屏接口见下一条
 response if ${app_Tieba} == true && ${url} ~= /^https?:\/\/tiebac\.baidu\.com\/c\/s\/sync(?:\?|$)/i then response.json.jq(`if type=="object" then . as $original | try (del(.home_screen_ad)) catch $original else . end`)
+# 冷启动抓包发现 /c/f/ad/getSplashAd；只拦精确路径，减少对贴吧其他广告链路的影响
+request if ${app_Tieba} == true && ${url} ~= /^https?:\/\/tiebac\.baidu\.com\/c\/f\/ad\/getSplashAd(?:\?|$)/i then reject_dict(200)
 
 # 微博
 # 迁移原开屏预加载分支
@@ -122,4 +128,4 @@ request if ${app_Zhuanzhuan} == true && ${url} ~= /^https:\/\/app\.zhuanzhuan\.c
 
 [MitM]
 # 静态名单。开关仅关闭复写，不动态撤销 TLS 解密。
-hostname = acs.m.goofish.com, ad.12306.cn, api.coolapk.com, api.douban.com, api.m.jd.com, api.mcd.cn, api.zhihu.com, app.bilibili.com, app.zhuanzhuan.com, bootpreload.uve.weibo.com, edith.xiaohongshu.com, frodo.douban.com, guide-acs.m.taobao.com, m.ctrip.com, m5.amap.com, mall.meituan.com, sdkapp.uve.weibo.com, tiebac.baidu.com, wbapp.uve.weibo.com
+hostname = acs.m.goofish.com, acs.m.taobao.com, ad.12306.cn, api.coolapk.com, api.douban.com, api.m.jd.com, api.mcd.cn, api.zhihu.com, app.bilibili.com, app.zhuanzhuan.com, bootpreload.uve.weibo.com, edith.xiaohongshu.com, frodo.douban.com, guide-acs.m.taobao.com, m.ctrip.com, m5.amap.com, mall.meituan.com, sdkapp.uve.weibo.com, tiebac.baidu.com, wbapp.uve.weibo.com
