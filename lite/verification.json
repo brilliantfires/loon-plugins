@@ -1,7 +1,7 @@
 {
   "offline_assertions": 1098,
-  "rule_count": 76,
-  "jq_count": 36,
+  "rule_count": 77,
+  "jq_count": 37,
   "script_count": 1,
   "status": "passed",
   "private_capture_responses": {
@@ -11,7 +11,20 @@
     "Goofish_idleadv_scene_restore": 1,
     "12306_getAdList": 3,
     "NeteaseCloudMusic_home_vip_banner": 2,
-    "NeteaseCloudMusic_vip_popup": 2
+    "NeteaseCloudMusic_vip_popup": 2,
+    "Ctrip_tripAds_splash": 1,
+    "Ctrip_tripAds_feed": 1
+  },
+  "targeted_capture_checks": {
+    "Ctrip_tripAds": {
+      "splash_candidates": 4,
+      "visible_before": 1,
+      "visible_after": 0,
+      "feed_ads_before": 14,
+      "feed_ads_after": 14,
+      "feed_semantics": "unchanged",
+      "scope": "Saved response replay only; real-device behavior is not verified"
+    }
   },
   "limitations": [
     "Not a Loon parser test",

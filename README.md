@@ -8,7 +8,7 @@
 
 | 版本 | 导入地址 | 默认设置 |
 | --- | --- | --- |
-| 仅去开屏 | https://brilliantfires.github.io/loon-plugins/lite/Splash-Only.lpx | 15 个 App，豆瓣以外默认开启 |
+| 仅去开屏 | https://brilliantfires.github.io/loon-plugins/lite/Splash-Only.lpx | 16 个 App，豆瓣以外默认开启 |
 | App 内去广告 | https://brilliantfires.github.io/loon-plugins/lite/InApp-Ads.lpx | 24 个 App 独立开关，默认全部关闭 |
 
 分类按触发次数判断：

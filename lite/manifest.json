@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-15",
+  "date": "2026-11-19",
   "category_review": {
     "definitions": {
       "splash": "每次冷启动，或第一次进入某个 App 时只出现一次的图片、视频、模态弹窗或首次活动浮层",
@@ -54,6 +54,7 @@
         "Amap",
         "Bilibili",
         "Coolapk",
+        "Ctrip",
         "Douban",
         "Goofish",
         "JD",
@@ -80,13 +81,14 @@
         "edith.xiaohongshu.com",
         "frodo.douban.com",
         "guide-acs.m.taobao.com",
+        "m.ctrip.com",
         "m5.amap.com",
         "mall.meituan.com",
         "sdkapp.uve.weibo.com",
         "tiebac.baidu.com",
         "wbapp.uve.weibo.com"
       ],
-      "rules": 23,
+      "rules": 24,
       "scripts": 0
     },
     "inapp": {
@@ -229,6 +231,18 @@
       "phase": "response",
       "note": "保留所有初始化卡片；仅修改旧版已有开屏字段和等待参数；新组合待实测",
       "source": "plugins/Coolapk.lpx"
+    },
+    {
+      "mode": "splash",
+      "app": "Ctrip",
+      "hosts": [
+        "m.ctrip.com"
+      ],
+      "pattern": "/^https:\\/\\/m\\.ctrip\\.com\\/restapi\\/soa2\\/13916\\/json\\/tripAds(?:\\?|$)/i",
+      "action": "response.json.jq(`if type==\"object\" then . as $original | try (if (.seats|type)==\"array\" then .seats |= map(if type==\"object\" and (.ads|type)==\"array\" then .ads |= map(if type==\"object\" and ((((.creativeMaterial.templateType? // \"\") | tostring | test(\"^SPLASH\"; \"i\")) or (((.impType? // \"\") | tostring) == \"5\"))) then .creativeMaterial.splashExtra |= ((if type==\"object\" then . else {} end) + {isShow:false}) else . end) else . end) else . end) catch $original else . end`)",
+      "phase": "response",
+      "note": "冷启动响应中 SPLASH_CIRCLE、impType=5 开屏候选全部设为 isShow=false；同接口的首页 BANNER_ADS 与 IMAGE_COMMON 保持不变",
+      "source": "用户提供的携程冷启动抓包（2026-11-17）"
     },
     {
       "mode": "splash",
